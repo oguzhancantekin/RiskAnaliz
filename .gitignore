@@ -1,0 +1,48 @@
+# =========================
+# IDE ve Editör Dosyaları
+# =========================
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# =========================
+# İşletim Sistemi Dosyaları
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Backend (Spring Boot / Maven)
+# =========================
+backend/target/
+*.jar
+*.war
+*.ear
+# Eğer ileride bilgisayarına özel gizli şifreler koyduğun bir ayar dosyası yaparsan:
+backend/src/main/resources/application-local.properties
+
+# =========================
+# Frontend (React / Node.js)
+# =========================
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+npm-debug.log*
+yarn-error.log*
+
+# =========================
+# Veritabanı ve Loglar
+# =========================
+*.log
+logs/
+
+# =========================
+# Markdown (MD) Dokümanları
+# =========================
+*.md
+!README.md
