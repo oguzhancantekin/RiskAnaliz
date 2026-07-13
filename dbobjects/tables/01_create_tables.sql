@@ -59,3 +59,9 @@ CREATE TABLE TB_HESAPLAMA_LOG (
     HATA_MESAJI VARCHAR2(4000),
     SURE_MS NUMBER
 );
+
+-- 7. TB_RISKSIZ_GETIRI Tablosu: Sharpe, Treynor vb. hesaplamalar için kullanılacak risksiz faiz oranları.
+CREATE TABLE TB_RISKSIZ_GETIRI (
+    TARIH DATE PRIMARY KEY,
+    ORAN NUMBER(15, 6) NOT NULL
+);
