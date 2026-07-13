@@ -24,30 +24,40 @@ FROM TB_IS_GUNU
 WHERE TARIH < p_tarih
 AND IS_GUNU_MU = 1;
 
--- bugunden en az 12 ay onceki en yakin is gunu
+-- bugunden en az 1 ay onceki en yakin is gunu (TEST İÇİN)
 SELECT MAX (tarih)
 INTO V_GECEN_YIL_TARIH
 FROM TB_IS_GUNU
-WHERE TARIH < ADD_MONTHS(p_tarih, -12)
+WHERE TARIH < ADD_MONTHS(p_tarih, -1)
 AND IS_GUNU_MU = 1;
 
--- 
-
+-- 1. Bugünün Fiyatı (Eğer bugün fiyat yoksa prosedür haklı olarak durmalıdır)
 SELECT birim_fiyat INTO V_BUGUN_FIYAT FROM TB_FON_FIYAT
-WHERE FON_KODU = p_fonkodu
-AND TARIH = p_tarih;
+WHERE FON_KODU = p_fonkodu AND TARIH = p_tarih;
 
-SELECT birim_fiyat into V_DUN_FIYAT from TB_FON_FIYAT
-where FON_KODU=p_fonkodu
-and tarih=V_DUN_TARIH;
+-- 2. Dünkü Fiyat
+BEGIN
+    SELECT birim_fiyat into V_DUN_FIYAT from TB_FON_FIYAT
+    where FON_KODU=p_fonkodu and tarih=V_DUN_TARIH;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN V_DUN_FIYAT := NULL;
+END;
 
-SELECT birim_fiyat into V_GECEN_YIL_FIYAT from TB_FON_FIYAT
-where FON_KODU=p_fonkodu
-and tarih=V_GECEN_YIL_TARIH;
+-- 3. Geçen Yılki Fiyat (Eğer fon yeni kurulduysa veri olmayabilir, çökmesin NULL atansın)
+BEGIN
+    SELECT birim_fiyat into V_GECEN_YIL_FIYAT from TB_FON_FIYAT
+    where FON_KODU=p_fonkodu and tarih=V_GECEN_YIL_TARIH;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN V_GECEN_YIL_FIYAT := NULL;
+END;
 
-V_GUNLUK_GETIRI := (V_BUGUN_FIYAT-V_DUN_FIYAT)*100/(V_DUN_FIYAT);
+IF V_DUN_FIYAT IS NOT NULL THEN
+    V_GUNLUK_GETIRI := (V_BUGUN_FIYAT-V_DUN_FIYAT)*100/(V_DUN_FIYAT);
+END IF;
 
-V_YILLIK_GETIRI := (V_BUGUN_FIYAT-V_GECEN_YIL_FIYAT)*100/(V_GECEN_YIL_FIYAT);
+IF V_GECEN_YIL_FIYAT IS NOT NULL THEN
+    V_YILLIK_GETIRI := (V_BUGUN_FIYAT-V_GECEN_YIL_FIYAT)*100/(V_GECEN_YIL_FIYAT);
+END IF;
 
 -- MERGE komutu ise (Upsert) "Eğer veri varsa GÜNCELLE, yoksa YENİ EKLE" mantığıyla çalışır.("Idempotency")
 
