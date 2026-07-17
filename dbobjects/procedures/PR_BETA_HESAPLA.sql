@@ -18,11 +18,12 @@ BEGIN
     ),
     EndeksGetiri AS (
         SELECT 
-            TARIH,
+            -- BIST100 getirisini, fonun yayımlandığı bir sonraki iş günü (T+1) ile eşleştirmek için LEAD kullanıyoruz.
+            LEAD(TARIH) OVER (ORDER BY TARIH) AS TARIH,
             (FIYAT - LAG(FIYAT) OVER (ORDER BY TARIH)) / NULLIF(LAG(FIYAT) OVER (ORDER BY TARIH), 0) AS E_GETIRI
         FROM TB_ENDEKS_FIYAT
         WHERE ENDEKS_KODU = 'BIST100'
-          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih
+          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -13) AND p_tarih -- Kaydırma yapacağımız için fazladan 1 ay geriden alıyoruz
     )
     -- Tarihler üzerinden iki tabloyu birleştirip (JOIN), COVAR_SAMP ve VAR_SAMP fonksiyonlarını uyguluyoruz
     SELECT 
