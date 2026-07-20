@@ -24,11 +24,11 @@ FROM TB_IS_GUNU
 WHERE TARIH < p_tarih
 AND IS_GUNU_MU = 1;
 
--- bugunden en az 12 ay onceki en yakin is gunu
-SELECT MAX (tarih)
+-- bugunden en az 12 ay onceki en yakin is gunu (TEFAS MANTIGI: Ileriye dogru bakar)
+SELECT MIN(tarih)
 INTO V_GECEN_YIL_TARIH
 FROM TB_IS_GUNU
-WHERE TARIH <= ADD_MONTHS(p_tarih, -12)
+WHERE TARIH >= ADD_MONTHS(p_tarih, -12)
 AND IS_GUNU_MU = 1;
 
 -- 
