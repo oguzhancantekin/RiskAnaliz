@@ -23,6 +23,11 @@ BEGIN
         UPDATE TB_RISK_SONUC
         SET SORTINO = v_sortino
         WHERE FON_KODU = p_fonkodu AND HESAPLAMA_TARIHI = p_tarih;
+    ELSE
+        -- Downside risk 0 veya null ise, tabloda eski hatalı (çöp) veri kalmasın diye NULL'a çekilir.
+        UPDATE TB_RISK_SONUC
+        SET SORTINO = NULL
+        WHERE FON_KODU = p_fonkodu AND HESAPLAMA_TARIHI = p_tarih;
     END IF;
 EXCEPTION
     WHEN OTHERS THEN
