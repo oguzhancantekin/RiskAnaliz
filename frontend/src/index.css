@@ -1,83 +1,282 @@
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f4f7f6;
-  margin: 0;
-  padding: 20px;
-  color: #333;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* TEFAS Color Palette */
+  --bg-dark: #0b1528;
+  --bg-darker: #070d1a;
+  --bg-gradient-start: #0f274c;
+  --bg-gradient-end: #0a172e;
+  
+  --text-white: #ffffff;
+  --text-light: #cbd5e1;
+  --text-gray: #94a3b8;
+  
+  --accent-yellow: #f4c329;
+  --accent-yellow-hover: #dca917;
+  
+  --accent-blue: #3b82f6;
+  --panel-bg: rgba(15, 39, 76, 0.4);
+  --panel-border: rgba(255, 255, 255, 0.1);
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+  
+  --transition-fast: 200ms ease;
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  background-color: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-h1 {
-  text-align: center;
-  color: #2c3e50;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
-}
-
-.upload-section {
-  margin-top: 30px;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #fafafa;
-}
-
-.upload-section h2 {
-  margin-top: 0;
-  color: #34495e;
-  font-size: 1.2rem;
-}
-
-.file-input {
-  display: block;
-  margin-bottom: 15px;
-  padding: 10px;
-  border: 1px dashed #bbb;
-  width: 100%;
+* {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.upload-button {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ==========================================================================
+   Top Navigation Layout (TEFAS Style)
+   ========================================================================== */
+.tefas-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.tefas-header {
+  background-color: rgba(7, 13, 26, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--panel-border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  color: var(--text-white);
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.logo-subtitle {
+  font-size: 0.65rem;
+  color: var(--text-gray);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.top-nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-link {
+  color: var(--text-light);
+  font-size: 0.875rem; /* ~14px (TEFAS text-sm) */
+  line-height: 1.25rem;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--text-white);
+}
+
+.nav-link.active {
+  color: var(--text-white);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--accent-yellow);
+  border-radius: 2px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.lang-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
   cursor: pointer;
-  font-weight: bold;
+  color: var(--text-light);
 }
 
-.upload-button:hover {
-  background-color: #2980b9;
+.lang-selector:hover {
+  color: var(--text-white);
 }
 
-.upload-button:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
+.takas-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: 2rem;
+  border-left: 1px solid var(--panel-border);
 }
 
-.message {
-  margin-top: 15px;
-  padding: 10px;
-  border-radius: 4px;
+.takas-text {
+  display: flex;
+  flex-direction: column;
 }
 
-.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+.takas-title {
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
 }
 
-.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+.takas-subtitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-light);
 }
+
+.tefas-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   Hero Section (Dashboard)
+   ========================================================================== */
+.hero-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 4rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.tefas-home {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: url('/assets/photos/home-dark-banner.jpg') no-repeat center center;
+  background-size: cover;
+  background-color: var(--bg-dark);
+}
+
+.hero-content {
+  flex: 1;
+  max-width: 600px;
+  z-index: 10;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1px;
+}
+
+.text-highlight {
+  color: var(--accent-yellow);
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+}
+
+.hero-btn {
+  background-color: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  color: var(--text-white);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-full);
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(5px);
+}
+
+.hero-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-icon {
+  background-color: var(--bg-darker);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-yellow);
+}
+
+/* Removed inner page styles to clean up CSS */
