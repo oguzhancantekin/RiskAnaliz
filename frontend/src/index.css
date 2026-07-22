@@ -20,20 +20,22 @@
 }
 
 :root {
-  /* TEFAS Original Color Palette */
-  --bg-dark: #121c2e;
-  --bg-darker: #0c1421;
-  --header-bg: #0b111e;
+  /* TEFAS Official Color Tokens (Extracted from official TEFAS stylesheet) */
+  --bg-dark: #0d1117;           /* --color-surface-background: 13 17 23 */
+  --bg-darker: #141a22;         /* --color-surface-card: 20 26 34 */
+  --header-bg: #171f29;         /* --color-surface-control: 23 31 41 */
   
-  --text-white: #ffffff;
-  --text-light: #d1d5db;
-  --text-gray: #9ca3af;
+  --text-white: #f3f6fa;        /* --color-text-primary: 243 246 250 */
+  --text-light: #ccd4df;        /* --color-text-secondary: 204 212 223 */
+  --text-gray: #98a3b3;         /* --color-text-muted: 152 163 179 */
   
-  --accent-yellow: #f5b931;
-  --accent-yellow-hover: #dca326;
-  --accent-blue: #2358aa;
+  --accent-yellow: #fdb817;     /* --color-brand-yellow: 253 195 45 */
+  --accent-yellow-hover: #e0a514;
+  --accent-blue: #2768b2;        /* --color-brand-primary: 39 104 178 */
+  --accent-blue-hover: #2f7dc7;
   
-  --panel-border: rgba(255, 255, 255, 0.1);
+  --panel-border: #334254;      /* --color-border-card-blue: 51 66 84 */
+  --control-border: #354a60;    /* --color-border-input: 53 74 96 */
   --transition-fast: 200ms ease;
 }
 
@@ -379,3 +381,691 @@ a {
   width: 16px;
   height: 16px;
 }
+
+/* ==========================================================================
+   TEFAS Official Page Layout Styles (Risk Metrics)
+   ========================================================================== */
+.tefas-page {
+  flex: 1;
+  background-color: var(--bg-dark);
+  padding: 1.5rem 2rem 4rem 2rem;
+  font-family: 'TefasFont', 'Inter', sans-serif;
+}
+
+.tefas-page-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Breadcrumb */
+.tefas-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-gray);
+  margin-bottom: 1.25rem;
+}
+
+.tefas-breadcrumb a {
+  color: var(--text-gray);
+  transition: color var(--transition-fast);
+}
+
+.tefas-breadcrumb a:hover {
+  color: var(--text-white);
+}
+
+.tefas-breadcrumb .breadcrumb-arrow {
+  color: #4b5563;
+}
+
+.tefas-breadcrumb .current {
+  color: var(--text-white);
+  font-weight: 500;
+}
+
+/* Title Bar Row */
+.tefas-title-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 2rem;
+}
+
+.title-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tefas-section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-white);
+  line-height: 1.2;
+}
+
+.tefas-section-desc {
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  line-height: 1.5;
+  max-width: 650px;
+}
+
+/* Export Toolbar (Kopyala, Yazdır, Excel, CSV, PDF) */
+.export-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.export-btn {
+  background-color: var(--header-bg);
+  border: 1px solid var(--control-border);
+  color: var(--text-light);
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.export-btn:hover {
+  background-color: var(--panel-border);
+  color: var(--text-white);
+}
+
+.title-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.tefas-search-box {
+  position: relative;
+  width: 360px;
+}
+
+.tefas-search-box input {
+  width: 100%;
+  background-color: var(--header-bg);
+  border: 1px solid var(--control-border);
+  color: var(--text-white);
+  padding: 0.5rem 2.4rem 0.5rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.tefas-search-box input:focus {
+  border-color: var(--accent-blue);
+}
+
+.tefas-search-box .search-icon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-gray);
+  pointer-events: none;
+}
+
+.search-meta-info {
+  font-size: 0.8rem;
+  color: var(--text-gray);
+}
+
+/* Dynamic Filter Card (TEFAS Official Replica) */
+.dynamic-filter-card {
+  background-color: var(--bg-darker);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.filter-card-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.filter-col-semsiye {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 280px;
+}
+
+.filter-col-semsiye label, .filter-col-ratios label {
+  font-size: 0.75rem;
+  color: var(--text-gray);
+  font-weight: 500;
+}
+
+.tefas-select-lg {
+  background-color: var(--header-bg);
+  border: 1px solid var(--control-border);
+  color: var(--text-white);
+  border-radius: 6px;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
+  outline: none;
+  height: 40px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.filter-col-ratios {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.ratio-inputs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.ratio-input-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: var(--header-bg);
+  border: 1px solid var(--control-border);
+  border-radius: 6px;
+  padding: 3px 6px;
+  height: 40px;
+}
+
+.ratio-select-metric, .ratio-select-op {
+  background: transparent;
+  border: none;
+  color: var(--text-white);
+  font-size: 0.825rem;
+  outline: none;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.ratio-select-op {
+  color: #60a5fa;
+  font-weight: 700;
+}
+
+.ratio-val-input {
+  width: 55px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--control-border);
+  color: var(--text-white);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.825rem;
+  outline: none;
+  text-align: center;
+}
+
+.ratio-val-input:focus {
+  border-color: var(--accent-blue);
+}
+
+.remove-ratio-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-gray);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+
+.remove-ratio-btn:hover {
+  color: #f87171;
+}
+
+.add-ratio-link-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent-blue);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  transition: color 0.2s;
+}
+
+.add-ratio-link-btn:hover {
+  color: var(--accent-blue-hover);
+  text-decoration: underline;
+}
+
+.filter-col-submit {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  padding-top: 1.5rem;
+}
+
+.tefas-submit-btn-lg {
+  background-color: var(--accent-blue);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  height: 40px;
+}
+
+.tefas-submit-btn-lg:hover {
+  background-color: var(--accent-blue-hover);
+}
+
+/* Sub-table Control Bar */
+.table-sub-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding: 0 0.25rem;
+}
+
+.sub-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.sub-results-count {
+  font-size: 0.8rem;
+  color: var(--text-gray);
+}
+
+.tefas-page-size-select, .tefas-list-settings-btn {
+  background-color: var(--header-bg);
+  border: 1px solid var(--control-border);
+  color: var(--text-white);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  outline: none;
+  cursor: pointer;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tefas-list-settings-btn {
+  color: var(--text-gray);
+}
+
+.tefas-list-settings-btn:hover {
+  color: var(--text-white);
+  border-color: var(--panel-border);
+}
+
+/* TEFAS Official Blue Header Data Table */
+.tefas-table-card {
+  background-color: var(--bg-darker);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.tefas-blue-header-table {
+  width: 100%;
+  min-width: 1350px;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.tefas-blue-header-table thead tr {
+  background: linear-gradient(90deg, #164c82 0%, #2768b2 100%);
+  color: #ffffff;
+}
+
+.tefas-blue-header-table th {
+  padding: 0.55rem 0.35rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  white-space: nowrap;
+  user-select: none;
+  height: 38px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tefas-blue-header-table th:last-child {
+  border-right: none;
+}
+
+.tefas-blue-header-table th.sortable {
+  cursor: pointer;
+}
+
+.tefas-blue-header-table th.sortable:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.tefas-blue-header-table th .info-icon {
+  margin: 0 2px;
+  vertical-align: middle;
+  opacity: 0.85;
+}
+
+.tefas-blue-header-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color var(--transition-fast);
+}
+
+.tefas-blue-header-table tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.015);
+}
+
+.tefas-blue-header-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.tefas-blue-header-table td {
+  padding: 0.45rem 0.35rem;
+  color: var(--text-light);
+  white-space: nowrap;
+  font-size: 0.775rem;
+  box-sizing: border-box;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fixed Column Width Classes */
+.td-action, .th-action {
+  width: 34px;
+  text-align: center;
+  padding: 0.55rem 0.25rem !important;
+}
+
+.th-code, .td-code {
+  width: 75px;
+  text-align: center;
+}
+
+.th-name, .td-name {
+  width: 210px;
+}
+
+.th-semsiye, .td-semsiye {
+  width: 170px;
+}
+
+.th-risk, .td-risk {
+  width: 85px;
+  text-align: center;
+  padding: 0.55rem 0.25rem !important;
+}
+
+.th-num {
+  width: 98px;
+}
+
+.add-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(39, 104, 178, 0.6);
+  background-color: rgba(39, 104, 178, 0.15);
+  color: #60a5fa;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.add-btn:hover {
+  background-color: var(--accent-blue);
+  color: #ffffff;
+  border-color: var(--accent-blue);
+}
+
+/* Official TEFAS Fund Code Badge */
+.code-pill {
+  background: linear-gradient(135deg, #164c82 0%, #12304d 50%, #1b242e 100%);
+  border: 1px solid var(--control-border);
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.td-name {
+  font-weight: 500;
+  color: var(--text-white);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Status Dot & Şemsiye */
+.td-semsiye {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--text-gray);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-dot {
+  color: #10b981;
+  font-size: 0.55rem;
+}
+
+/* Risk Score Display Bar (1 / 7) */
+.th-risk, .td-risk {
+  width: 60px;
+  padding: 0.45rem 0.25rem !important;
+}
+
+.risk-display {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  min-width: 35px;
+}
+
+.risk-score {
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #10b981;
+}
+
+.risk-bar-track {
+  width: 28px;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.risk-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+/* Values and Percentage Arrows */
+.percent-val {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.percent-val.positive {
+  color: #34d399;
+}
+
+.percent-val.negative {
+  color: #f87171;
+}
+
+.arrow-up {
+  color: #34d399;
+  font-size: 0.65rem;
+}
+
+.arrow-down {
+  color: #f87171;
+  font-size: 0.65rem;
+}
+
+/* Ratio Action Links Row */
+.ratio-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 0.35rem;
+}
+
+.add-ratio-link-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent-blue);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.add-ratio-link-btn:hover {
+  color: var(--accent-blue-hover);
+  text-decoration: underline;
+}
+
+.clear-ratios-link-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-gray);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.clear-ratios-link-btn:hover {
+  color: #f87171;
+  text-decoration: underline;
+}
+
+/* TEFAS Replica Pagination Control Bar */
+.tefas-pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.25rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-darker);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+}
+
+.pagination-info {
+  font-size: 0.8rem;
+  color: var(--text-gray);
+}
+
+.pagination-info strong {
+  color: var(--text-white);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.page-nav-btn {
+  background-color: var(--header-bg);
+  border: 1px solid var(--control-border);
+  color: var(--text-light);
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.page-nav-btn:hover:not(:disabled) {
+  background-color: var(--accent-blue);
+  color: #ffffff;
+  border-color: var(--accent-blue);
+}
+
+.page-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.page-num-btn {
+  background-color: var(--header-bg);
+  border: 1px solid var(--control-border);
+  color: var(--text-light);
+  min-width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.page-num-btn:hover {
+  background-color: var(--panel-border);
+  color: var(--text-white);
+}
+
+.page-num-btn.active {
+  background-color: var(--accent-blue);
+  color: #ffffff;
+  border-color: var(--accent-blue);
+  font-weight: 700;
+}
+
+.page-ellipsis {
+  color: var(--text-gray);
+  padding: 0 0.25rem;
+  font-size: 0.8rem;
+}
+
