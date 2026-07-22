@@ -18,6 +18,52 @@ import {
   X
 } from 'lucide-react';
 
+const EXCLUDED_FUNDS = ['NMG', 'OSF', 'HUS', 'PDR', 'ZJR', 'UZY'];
+
+// Helper for case-insensitive DB property access
+const getProp = (item, key) => {
+  if (!item) return '';
+  return item[key] ?? item[key.toLowerCase()] ?? item[key.toUpperCase()] ?? '';
+};
+
+const getPropNum = (item, key) => {
+  if (!item) return 0;
+  const val = item[key] ?? item[key.toLowerCase()] ?? item[key.toUpperCase()];
+  return val === null || val === undefined ? 0 : Number(val);
+};
+
+// Auto calculate TEFAS Risk Level (1-7) from Volatility
+const getRiskValue = (volatility) => {
+  if (volatility === null || volatility === undefined) return { level: 1, text: '1 / 7', color: '#10b981', percent: 14 };
+  const vol = Math.abs(volatility * 100);
+  if (vol < 1.0) return { level: 1, text: '1 / 7', color: '#10b981', percent: 14 };
+  if (vol < 3.0) return { level: 2, text: '2 / 7', color: '#10b981', percent: 28 };
+  if (vol < 7.0) return { level: 3, text: '3 / 7', color: '#fbbf24', percent: 42 };
+  if (vol < 12.0) return { level: 4, text: '4 / 7', color: '#f59e0b', percent: 57 };
+  if (vol < 18.0) return { level: 5, text: '5 / 7', color: '#f97316', percent: 71 };
+  if (vol < 25.0) return { level: 6, text: '6 / 7', color: '#ef4444', percent: 85 };
+  return { level: 7, text: '7 / 7', color: '#dc2626', percent: 100 };
+};
+
+const formatNumber = (num, decimals = 4) => {
+  if (num === null || num === undefined || isNaN(num)) return '-';
+  return Number(num).toFixed(decimals);
+};
+
+const formatPercent = (num, showArrow = true, decimals = 4, isAlreadyPercent = false) => {
+  if (num === null || num === undefined || isNaN(num)) return '-';
+  const val = isAlreadyPercent ? Number(num) : Number(num) * 100;
+  const isPositive = val >= 0;
+  return (
+    <span className={`percent-val ${isPositive ? 'positive' : 'negative'}`}>
+      {showArrow && (
+        isPositive ? <span className="arrow-up">▲</span> : <span className="arrow-down">▼</span>
+      )}
+      %{val.toFixed(decimals).replace('.', ',')}
+    </span>
+  );
+};
+
 const RiskMetrics = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,35 +79,10 @@ const RiskMetrics = () => {
   const [semsiyeTuru, setSemsiyeTuru] = useState('ALL');
   const [ratioFilters, setRatioFilters] = useState([]);
 
-  // Helper for case-insensitive DB property access
-  const getProp = (item, key) => {
-    if (!item) return '';
-    return item[key] ?? item[key.toLowerCase()] ?? item[key.toUpperCase()] ?? '';
-  };
-
-  const getPropNum = (item, key) => {
-    if (!item) return 0;
-    const val = item[key] ?? item[key.toLowerCase()] ?? item[key.toUpperCase()];
-    return val === null || val === undefined ? 0 : Number(val);
-  };
-
   // Reset page to 1 when filters or page size change
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, semsiyeTuru, ratioFilters, pageSize]);
-
-  // Auto calculate TEFAS Risk Level (1-7) from Volatility
-  const getRiskValue = (volatility) => {
-    if (volatility === null || volatility === undefined) return { level: 1, text: '1 / 7', color: '#10b981', percent: 14 };
-    const vol = Math.abs(volatility * 100);
-    if (vol < 1.0) return { level: 1, text: '1 / 7', color: '#10b981', percent: 14 };
-    if (vol < 3.0) return { level: 2, text: '2 / 7', color: '#10b981', percent: 28 };
-    if (vol < 7.0) return { level: 3, text: '3 / 7', color: '#fbbf24', percent: 42 };
-    if (vol < 12.0) return { level: 4, text: '4 / 7', color: '#f59e0b', percent: 57 };
-    if (vol < 18.0) return { level: 5, text: '5 / 7', color: '#f97316', percent: 71 };
-    if (vol < 25.0) return { level: 6, text: '6 / 7', color: '#ef4444', percent: 85 };
-    return { level: 7, text: '7 / 7', color: '#dc2626', percent: 100 };
-  };
 
   const fetchRiskData = async () => {
     setLoading(true);
@@ -106,12 +127,9 @@ const RiskMetrics = () => {
     setRatioFilters(updated);
   };
 
-  const EXCLUDED_FUNDS = ['NMG', 'OSF', 'HUS', 'PDR', 'ZJR', 'UZY'];
-
   // Advanced Filtering Logic
   const filteredData = data.filter((item) => {
     const rawCode = getProp(item, 'FON_KODU');
-    // Exclude blacklisted funds
     if (rawCode && EXCLUDED_FUNDS.includes(rawCode.toUpperCase())) return false;
 
     // 1. Search term
@@ -160,25 +178,6 @@ const RiskMetrics = () => {
   const startIndex = (currentPage - 1) * pageSize;
   const displayedData = sortedData.slice(startIndex, startIndex + pageSize);
 
-  const formatNumber = (num, decimals = 4) => {
-    if (num === null || num === undefined || isNaN(num)) return '-';
-    return Number(num).toFixed(decimals);
-  };
-
-  const formatPercent = (num, showArrow = true, decimals = 4, isAlreadyPercent = false) => {
-    if (num === null || num === undefined || isNaN(num)) return '-';
-    const val = isAlreadyPercent ? Number(num) : Number(num) * 100;
-    const isPositive = val >= 0;
-    return (
-      <span className={`percent-val ${isPositive ? 'positive' : 'negative'}`}>
-        {showArrow && (
-          isPositive ? <span className="arrow-up">▲</span> : <span className="arrow-down">▼</span>
-        )}
-        %{val.toFixed(decimals).replace('.', ',')}
-      </span>
-    );
-  };
-
   return (
     <div className="tefas-page">
       <div className="tefas-page-container">
@@ -195,7 +194,7 @@ const RiskMetrics = () => {
           <div className="title-left">
             <h1 className="tefas-section-title">Fon Risk Metrikleri Hesaplama</h1>
             <p className="tefas-section-desc">
-              Fon adına veya koduna tıklayarak detay sayfasına erişebilirsiniz.
+              Fon adına veya koduna tıklayarak TEFAS detaylı analiz sayfasına erişebilirsiniz.
             </p>
 
             {/* Export Toolbar Buttons */}
@@ -258,8 +257,6 @@ const RiskMetrics = () => {
                       className="ratio-select-metric"
                     >
                       <option value="SHARPE">Sharpe</option>
-                      <option value="GUNLUK_GETIRI">Günlük Getiri (%)</option>
-                      <option value="YILLIK_GETIRI">Yıllık Getiri (%)</option>
                       <option value="VOLATILITE">Volatilite</option>
                       <option value="DOWNSIDE_RISK">Downside Risk</option>
                       <option value="DEGISIM_KATSAYISI">Değişim Katsayısı</option>
@@ -347,7 +344,7 @@ const RiskMetrics = () => {
           </div>
         </div>
 
-        {/* TEFAS Custom Data Table (Screenshot Replica) */}
+        {/* TEFAS Custom Data Table */}
         <div className="tefas-table-card">
           {loading ? (
             <div className="tefas-table-loading">
