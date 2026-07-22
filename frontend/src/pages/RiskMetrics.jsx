@@ -4,6 +4,8 @@ import {
   ChevronRight,
   Search,
   Plus,
+  Check,
+  Award,
   Info,
   ArrowUpDown,
   RefreshCw,
@@ -17,6 +19,7 @@ import {
   SlidersHorizontal,
   X
 } from 'lucide-react';
+import FundCompareModal from '../components/FundCompareModal';
 
 const EXCLUDED_FUNDS = ['NMG', 'OSF', 'HUS', 'PDR', 'ZJR', 'UZY'];
 
@@ -79,6 +82,10 @@ const RiskMetrics = () => {
   const [semsiyeTuru, setSemsiyeTuru] = useState('ALL');
   const [ratioFilters, setRatioFilters] = useState([]);
 
+  // Comparison Selection Basket & Modal
+  const [selectedFunds, setSelectedFunds] = useState([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+
   // Reset page to 1 when filters or page size change
   useEffect(() => {
     setCurrentPage(1);
@@ -125,6 +132,21 @@ const RiskMetrics = () => {
     const updated = [...ratioFilters];
     updated[index][field] = value;
     setRatioFilters(updated);
+  };
+
+  // Toggle fund selection for comparison basket (max 5)
+  const toggleSelectFund = (fund) => {
+    const code = getProp(fund, 'FON_KODU');
+    const exists = selectedFunds.some(f => getProp(f, 'FON_KODU') === code);
+    if (exists) {
+      setSelectedFunds(selectedFunds.filter(f => getProp(f, 'FON_KODU') !== code));
+    } else {
+      if (selectedFunds.length >= 5) {
+        alert('En fazla 5 fonu aynı anda karşılaştırabilirsiniz.');
+        return;
+      }
+      setSelectedFunds([...selectedFunds, fund]);
+    }
   };
 
   // Advanced Filtering Logic
@@ -415,12 +437,17 @@ const RiskMetrics = () => {
                       const varRmd = getPropNum(item, 'VAR_RMD');
 
                       const riskInfo = getRiskValue(volatilite);
+                      const isSelected = selectedFunds.some(f => getProp(f, 'FON_KODU') === fonKodu);
 
                       return (
                         <tr key={index}>
                           <td className="td-action">
-                            <button className="add-btn" title="Karşılaştırmaya Ekle">
-                              <Plus size={12} />
+                            <button
+                              className={`add-btn ${isSelected ? 'active' : ''}`}
+                              onClick={() => toggleSelectFund(item)}
+                              title={isSelected ? "Karşılaştırmadan Çıkar" : "Karşılaştırmaya Ekle"}
+                            >
+                              {isSelected ? <Check size={11} /> : <Plus size={11} />}
                             </button>
                           </td>
                           <td className="td-code">
@@ -536,6 +563,55 @@ const RiskMetrics = () => {
         </div>
 
       </div>
+
+      {/* Floating Compare Selection Drawer Bar */}
+      {selectedFunds.length > 0 && (
+        <div className="floating-compare-bar">
+          <div className="compare-fund-pills">
+            {selectedFunds.map((sf) => {
+              const code = getProp(sf, 'FON_KODU');
+              return (
+                <span key={code} className="selected-fund-tag">
+                  {code}
+                  <button
+                    className="remove-tag-btn"
+                    onClick={() => toggleSelectFund(sf)}
+                    title="Kaldır"
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              );
+            })}
+          </div>
+
+          <span className="compare-bar-count">({selectedFunds.length} / 5 Seçildi)</span>
+
+          <button
+            className="compare-launch-btn"
+            onClick={() => setIsCompareModalOpen(true)}
+          >
+            <Award size={16} />
+            <span>Risk Radarını Aç</span>
+          </button>
+
+          <button
+            className="compare-clear-btn"
+            onClick={() => setSelectedFunds([])}
+          >
+            Temizle
+          </button>
+        </div>
+      )}
+
+      {/* Fund Compare Modal Component */}
+      <FundCompareModal
+        isOpen={isCompareModalOpen}
+        onClose={() => setIsCompareModalOpen(false)}
+        selectedFunds={selectedFunds}
+        allData={data}
+      />
+
     </div>
   );
 };
