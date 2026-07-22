@@ -45,6 +45,7 @@ public class RiskHesaplamaController {
             java.util.List<Map<String, Object>> sonuclar = riskService.getSonuclar(fonKodu);
             return ResponseEntity.ok(sonuclar);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().build();
         }
     }

@@ -30,9 +30,9 @@ const Layout = () => {
               <div className="nav-link">
                 Fon Verileri <ChevronDown size={14} />
               </div>
-              <div className="nav-link">
+              <NavLink to="/risk-metrikleri" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
                 Risk Metrikleri
-              </div>
+              </NavLink>
               <div className="nav-link">
                 İstatistikler <ChevronDown size={14} />
               </div>
