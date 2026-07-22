@@ -106,10 +106,16 @@ const RiskMetrics = () => {
     setRatioFilters(updated);
   };
 
+  const EXCLUDED_FUNDS = ['NMG', 'OSF', 'HUS', 'PDR', 'ZJR', 'UZY'];
+
   // Advanced Filtering Logic
   const filteredData = data.filter((item) => {
+    const rawCode = getProp(item, 'FON_KODU');
+    // Exclude blacklisted funds
+    if (rawCode && EXCLUDED_FUNDS.includes(rawCode.toUpperCase())) return false;
+
     // 1. Search term
-    const code = getProp(item, 'FON_KODU').toLowerCase();
+    const code = (rawCode || '').toLowerCase();
     const name = getProp(item, 'FON_ADI').toLowerCase();
     const search = searchTerm.toLowerCase();
     if (search && !(code.includes(search) || name.includes(search))) return false;

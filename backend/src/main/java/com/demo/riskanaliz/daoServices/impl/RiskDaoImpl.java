@@ -27,7 +27,8 @@ public class RiskDaoImpl implements RiskDao {
                      "f.FON_ADI, f.FON_TURU AS SEMSIYE " +
                      "FROM TB_RISK_SONUC r " +
                      "LEFT JOIN TB_FONLAR f ON r.FON_KODU = f.FON_KODU " +
-                     "WHERE r.HESAPLAMA_TARIHI = (SELECT MAX(HESAPLAMA_TARIHI) FROM TB_RISK_SONUC) ";
+                     "WHERE r.HESAPLAMA_TARIHI = (SELECT MAX(HESAPLAMA_TARIHI) FROM TB_RISK_SONUC) " +
+                     "AND r.FON_KODU NOT IN ('NMG', 'OSF', 'HUS', 'PDR', 'ZJR', 'UZY') ";
 
         java.util.List<java.util.Map<String, Object>> list;
         if (fonKodu != null && !fonKodu.trim().isEmpty()) {
