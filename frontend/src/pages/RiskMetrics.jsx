@@ -427,10 +427,25 @@ const RiskMetrics = () => {
                             </button>
                           </td>
                           <td className="td-code">
-                            <span className="code-pill">{fonKodu}</span>
+                            <a
+                              href={`https://www.tefas.gov.tr/tr/fon-detayli-analiz/${fonKodu}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="code-pill-link"
+                              title={`${fonKodu} TEFAS Detaylı Analiz Sayfasını Aç`}
+                            >
+                              <span className="code-pill">{fonKodu}</span>
+                            </a>
                           </td>
                           <td className="td-name" title={fonAdi}>
-                            {fonAdi || '-'}
+                            <a
+                              href={`https://www.tefas.gov.tr/tr/fon-detayli-analiz/${fonKodu}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="fund-name-link"
+                            >
+                              {fonAdi || '-'}
+                            </a>
                           </td>
                           <td className="td-semsiye" title={semsiye}>
                             <span className="status-dot">●</span>
