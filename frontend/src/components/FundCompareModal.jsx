@@ -1,12 +1,12 @@
-import React from 'react';
-import { X, Award, AlertCircle, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Award, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 const FUND_COLORS = [
-  { stroke: '#3b82f6', fill: 'rgba(59, 130, 246, 0.25)', name: 'Mavi' },
-  { stroke: '#10b981', fill: 'rgba(16, 185, 129, 0.25)', name: 'Yeşil' },
-  { stroke: '#f59e0b', fill: 'rgba(245, 158, 11, 0.25)', name: 'Turuncu' },
-  { stroke: '#a855f7', fill: 'rgba(168, 85, 247, 0.25)', name: 'Mor' },
-  { stroke: '#ec4899', fill: 'rgba(236, 72, 153, 0.25)', name: 'Pembe' }
+  { stroke: '#3b82f6', fill: 'rgba(59, 130, 246, 0.3)', name: 'Mavi' },
+  { stroke: '#10b981', fill: 'rgba(16, 185, 129, 0.3)', name: 'Yeşil' },
+  { stroke: '#f59e0b', fill: 'rgba(245, 158, 11, 0.3)', name: 'Turuncu' },
+  { stroke: '#a855f7', fill: 'rgba(168, 85, 247, 0.3)', name: 'Mor' },
+  { stroke: '#ec4899', fill: 'rgba(236, 72, 153, 0.3)', name: 'Pembe' }
 ];
 
 const getPropNum = (item, key) => {
@@ -20,10 +20,21 @@ const getPropStr = (item, key) => {
   return item[key] ?? item[key.toLowerCase()] ?? item[key.toUpperCase()] ?? '';
 };
 
-const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
+const FundCompareModal = ({ isOpen, onClose, selectedFunds }) => {
+  const [hiddenCodes, setHiddenCodes] = useState([]);
+
   if (!isOpen || !selectedFunds || selectedFunds.length === 0) return null;
 
-  // 1. Calculate Min/Max across selected funds (or all data) for 0-100 normalization
+  const toggleFundVisibility = (code) => {
+    if (hiddenCodes.includes(code)) {
+      setHiddenCodes(hiddenCodes.filter(c => c !== code));
+    } else {
+      if (selectedFunds.length - hiddenCodes.length <= 1) return; // keep at least 1 active
+      setHiddenCodes([...hiddenCodes, code]);
+    }
+  };
+
+  // 1. Calculate Min/Max across selected funds for 0-100 normalization
   const calculateScores = (funds) => {
     const rawMetrics = funds.map(f => ({
       fund: f,
@@ -34,7 +45,6 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
       downside: getPropNum(f, 'DOWNSIDE_RISK')
     }));
 
-    // Find min and max values to normalize
     const getMinMax = (key) => {
       const vals = rawMetrics.map(m => m[key]);
       const min = Math.min(...vals);
@@ -51,8 +61,8 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
     const normalize = (val, range, invert = false) => {
       if (range.max === range.min) return 50;
       let norm = ((val - range.min) / (range.max - range.min)) * 100;
-      norm = Math.max(10, Math.min(100, norm)); // keep within 10-100 for SVG chart visibility
-      return invert ? 110 - norm : norm;
+      norm = Math.max(12, Math.min(100, norm)); // keep within 12-100 for SVG chart visibility
+      return invert ? 112 - norm : norm;
     };
 
     return rawMetrics.map(m => ({
@@ -63,8 +73,8 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
         normalize(m.sharpe, sRange, false),      // 0: Verimlilik (Sharpe)
         normalize(m.sortino, soRange, false),    // 1: Düşüş Koruması (Sortino)
         normalize(m.alpha, aRange, false),        // 2: Alfa (Piyasa Bağımsızlığı)
-        normalize(m.vol, vRange, true),           // 3: Düşük Risk (Volatilite)
-        normalize(m.downside, dRange, true)       // 4: Kayıp Direnci (Downside Risk)
+        normalize(m.vol, vRange, true),           // 3: Fiyat İstikrarı (Düşük Volatilite)
+        normalize(m.downside, dRange, true)       // 4: Kayıp Direnci (Düşük Downside)
       ]
     }));
   };
@@ -72,20 +82,18 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
   const fundScores = calculateScores(selectedFunds);
 
   // SVG Radar Dimensions
-  const size = 340;
+  const size = 350;
   const center = size / 2;
   const radius = 110;
-  const axisCount = 5;
 
   const axes = [
     { label: 'Sharpe (Verimlilik)', angle: -90 },
     { label: 'Sortino (Düşüş K.)', angle: -18 },
     { label: 'Alpha (Piyasa B.)', angle: 54 },
-    { label: 'Düşük Volatilite', angle: 126 },
-    { label: 'Düşük Downside', angle: 198 }
+    { label: 'Fiyat İstikrarı', angle: 126 },
+    { label: 'Kayıp Direnci', angle: 198 }
   ];
 
-  // Convert angle and distance to SVG point
   const getCoordinates = (angleDeg, distanceRatio) => {
     const angleRad = (angleDeg * Math.PI) / 180;
     const r = radius * distanceRatio;
@@ -95,7 +103,6 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
     };
   };
 
-  // Build SVG polygon points path for a fund
   const getPolygonPoints = (scores) => {
     return scores
       .map((score, i) => {
@@ -106,13 +113,15 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
       .join(' ');
   };
 
-  // Find best performing fund for each metric
+  // Find best performing fund for each metric among VISIBLE funds
+  const visibleFunds = selectedFunds.filter(f => !hiddenCodes.includes(getPropStr(f, 'FON_KODU')));
+  
   const findWinner = (metricKey, isMin = false) => {
-    if (selectedFunds.length <= 1) return null;
-    let winner = selectedFunds[0];
-    let bestVal = getPropNum(selectedFunds[0], metricKey);
+    if (visibleFunds.length <= 1) return null;
+    let winner = visibleFunds[0];
+    let bestVal = getPropNum(visibleFunds[0], metricKey);
 
-    selectedFunds.forEach(f => {
+    visibleFunds.forEach(f => {
       const val = getPropNum(f, metricKey);
       if (isMin ? val < bestVal : val > bestVal) {
         bestVal = val;
@@ -141,7 +150,7 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
             <Award className="header-icon" size={22} />
             <div>
               <h2>Fon Risk ve Verimlilik Radarı</h2>
-              <p>Seçilen {selectedFunds.length} fonun 5 ana eksende performans ve risk kıyaslaması</p>
+              <p>Fona tıklayarak grafikteki gösterimini açıp kapatabilir, 2'li kıyaslama yapabilirsiniz.</p>
             </div>
           </div>
           <button className="compare-modal-close" onClick={onClose}>
@@ -205,11 +214,12 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
                   );
                 })}
 
-                {/* Fund Radar Polygons */}
+                {/* Fund Radar Polygons (Render ONLY if visible) */}
                 {fundScores.map((fs, idx) => {
+                  if (hiddenCodes.includes(fs.code)) return null;
                   const color = FUND_COLORS[idx % FUND_COLORS.length];
                   return (
-                    <g key={fs.code}>
+                    <g key={fs.code} className="radar-polygon-group">
                       <polygon
                         points={getPolygonPoints(fs.scores)}
                         fill={color.fill}
@@ -217,7 +227,6 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
                         strokeWidth="2.5"
                         className="radar-fund-polygon"
                       />
-                      {/* Vertex Dots */}
                       {fs.scores.map((score, i) => {
                         const pt = getCoordinates(axes[i].angle, score / 100);
                         return (
@@ -239,15 +248,24 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
               </svg>
             </div>
 
-            {/* Fund Legend */}
+            {/* Interactive Fund Legend (Click to Toggle Visibility) */}
             <div className="radar-legend">
               {fundScores.map((fs, idx) => {
                 const color = FUND_COLORS[idx % FUND_COLORS.length];
+                const isHidden = hiddenCodes.includes(fs.code);
                 return (
-                  <div key={fs.code} className="legend-item">
-                    <span className="legend-dot" style={{ backgroundColor: color.stroke }}></span>
+                  <div
+                    key={fs.code}
+                    className={`legend-item ${isHidden ? 'disabled' : ''}`}
+                    onClick={() => toggleFundVisibility(fs.code)}
+                    title={isHidden ? `${fs.code} Göster` : `${fs.code} Gizle`}
+                  >
+                    <span
+                      className="legend-dot"
+                      style={{ backgroundColor: isHidden ? '#6b7280' : color.stroke }}
+                    ></span>
                     <span className="legend-code">{fs.code}</span>
-                    <span className="legend-name">{fs.name}</span>
+                    {isHidden ? <EyeOff size={11} className="toggle-eye" /> : <Eye size={11} className="toggle-eye" />}
                   </div>
                 );
               })}
@@ -266,10 +284,24 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
                     <th>Metrik</th>
                     {fundScores.map((fs, idx) => {
                       const color = FUND_COLORS[idx % FUND_COLORS.length];
+                      const isHidden = hiddenCodes.includes(fs.code);
                       return (
-                        <th key={fs.code} style={{ borderBottomColor: color.stroke }}>
-                          <span className="pill-header" style={{ borderColor: color.stroke, color: color.stroke }}>
-                            {fs.code}
+                        <th
+                          key={fs.code}
+                          style={{ borderBottomColor: isHidden ? 'transparent' : color.stroke }}
+                          className={`clickable-header ${isHidden ? 'muted' : ''}`}
+                          onClick={() => toggleFundVisibility(fs.code)}
+                          title="Grafikte Aç / Kapat"
+                        >
+                          <span
+                            className="pill-header"
+                            style={{
+                              borderColor: isHidden ? '#4b5563' : color.stroke,
+                              color: isHidden ? '#9ca3af' : color.stroke,
+                              opacity: isHidden ? 0.5 : 1
+                            }}
+                          >
+                            {fs.code} {isHidden && ' (Gizli)'}
                           </span>
                         </th>
                       );
@@ -280,9 +312,10 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
                   <tr>
                     <td><strong>Sharpe Oranı</strong></td>
                     {fundScores.map(fs => {
-                      const isWin = fs.code === winners.sharpe;
+                      const isHidden = hiddenCodes.includes(fs.code);
+                      const isWin = !isHidden && fs.code === winners.sharpe;
                       return (
-                        <td key={fs.code} className={isWin ? 'winner-cell' : ''}>
+                        <td key={fs.code} className={`${isWin ? 'winner-cell' : ''} ${isHidden ? 'muted-cell' : ''}`}>
                           {fs.raw.sharpe.toFixed(4)}
                           {isWin && <span className="winner-badge">Lider 🥇</span>}
                         </td>
@@ -293,9 +326,10 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
                   <tr>
                     <td><strong>Sortino Oranı</strong></td>
                     {fundScores.map(fs => {
-                      const isWin = fs.code === winners.sortino;
+                      const isHidden = hiddenCodes.includes(fs.code);
+                      const isWin = !isHidden && fs.code === winners.sortino;
                       return (
-                        <td key={fs.code} className={isWin ? 'winner-cell' : ''}>
+                        <td key={fs.code} className={`${isWin ? 'winner-cell' : ''} ${isHidden ? 'muted-cell' : ''}`}>
                           {fs.raw.sortino.toFixed(4)}
                           {isWin && <span className="winner-badge">Lider 🥇</span>}
                         </td>
@@ -306,9 +340,10 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
                   <tr>
                     <td><strong>Alpha</strong></td>
                     {fundScores.map(fs => {
-                      const isWin = fs.code === winners.alpha;
+                      const isHidden = hiddenCodes.includes(fs.code);
+                      const isWin = !isHidden && fs.code === winners.alpha;
                       return (
-                        <td key={fs.code} className={isWin ? 'winner-cell' : ''}>
+                        <td key={fs.code} className={`${isWin ? 'winner-cell' : ''} ${isHidden ? 'muted-cell' : ''}`}>
                           {fs.raw.alpha.toFixed(4)}
                           {isWin && <span className="winner-badge">Lider 🥇</span>}
                         </td>
@@ -319,11 +354,12 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
                   <tr>
                     <td><strong>Volatilite</strong></td>
                     {fundScores.map(fs => {
-                      const isWin = fs.code === winners.vol;
+                      const isHidden = hiddenCodes.includes(fs.code);
+                      const isWin = !isHidden && fs.code === winners.vol;
                       return (
-                        <td key={fs.code} className={isWin ? 'winner-cell' : ''}>
+                        <td key={fs.code} className={`${isWin ? 'winner-cell' : ''} ${isHidden ? 'muted-cell' : ''}`}>
                           %{(fs.raw.vol * 100).toFixed(4).replace('.', ',')}
-                          {isWin && <span className="winner-badge">En Düşük 🛡️</span>}
+                          {isWin && <span className="winner-badge">En Düşüş 🛡️</span>}
                         </td>
                       );
                     })}
@@ -332,9 +368,10 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
                   <tr>
                     <td><strong>Downside Risk</strong></td>
                     {fundScores.map(fs => {
-                      const isWin = fs.code === winners.downside;
+                      const isHidden = hiddenCodes.includes(fs.code);
+                      const isWin = !isHidden && fs.code === winners.downside;
                       return (
-                        <td key={fs.code} className={isWin ? 'winner-cell' : ''}>
+                        <td key={fs.code} className={`${isWin ? 'winner-cell' : ''} ${isHidden ? 'muted-cell' : ''}`}>
                           %{(fs.raw.downside * 100).toFixed(4).replace('.', ',')}
                           {isWin && <span className="winner-badge">En Dayanıklı 🛡️</span>}
                         </td>
@@ -348,7 +385,7 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds, allData }) => {
             <div className="compare-info-box">
               <AlertCircle size={15} />
               <span>
-                Radar grafiğinde alanı en geniş olan poligon, risk ve verimlilik dengesinde öne çıkan fonu temsil eder.
+                Fon rozetlerine veya tablo başlıklarına tıklayarak istediğiniz fonları grafikten gizleyebilir, 2'li birebir odak kıyaslama yapabilirsiniz.
               </span>
             </div>
 

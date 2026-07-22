@@ -1449,3 +1449,44 @@ a {
   color: #93c5fd;
 }
 
+.legend-item {
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--transition-fast);
+}
+
+.legend-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.legend-item.disabled {
+  opacity: 0.45;
+  background: rgba(0, 0, 0, 0.2);
+  border-style: dashed;
+}
+
+.toggle-eye {
+  color: var(--text-gray);
+  margin-left: 0.2rem;
+}
+
+.clickable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: opacity var(--transition-fast);
+}
+
+.clickable-header:hover {
+  opacity: 0.85;
+}
+
+.clickable-header.muted {
+  opacity: 0.5;
+}
+
+.muted-cell {
+  opacity: 0.35;
+  color: var(--text-gray) !important;
+}
+
