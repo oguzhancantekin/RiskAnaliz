@@ -1,31 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@font-face {
+  font-family: 'TefasFont';
+  src: url('/assets/fonts/358d04b2be4dec24-s.p.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'TefasFont';
+  src: url('/assets/fonts/388cf58c68f01c86-s.p.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'TefasFont';
+  src: url('/assets/fonts/48f6b8a169b1859d-s.p.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
 
 :root {
-  /* TEFAS Color Palette */
-  --bg-dark: #0b1528;
-  --bg-darker: #070d1a;
-  --bg-gradient-start: #0f274c;
-  --bg-gradient-end: #0a172e;
+  /* TEFAS Original Color Palette */
+  --bg-dark: #121c2e;
+  --bg-darker: #0c1421;
+  --header-bg: #0b111e;
   
   --text-white: #ffffff;
-  --text-light: #cbd5e1;
-  --text-gray: #94a3b8;
+  --text-light: #d1d5db;
+  --text-gray: #9ca3af;
   
-  --accent-yellow: #f4c329;
-  --accent-yellow-hover: #dca917;
+  --accent-yellow: #f5b931;
+  --accent-yellow-hover: #dca326;
+  --accent-blue: #2358aa;
   
-  --accent-blue: #3b82f6;
-  --panel-bg: rgba(15, 39, 76, 0.4);
   --panel-border: rgba(255, 255, 255, 0.1);
-
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-  
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
-  --radius-full: 9999px;
-  
   --transition-fast: 200ms ease;
 }
 
@@ -36,7 +44,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'TefasFont', 'Inter', sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-white);
   line-height: 1.5;
@@ -50,7 +58,7 @@ a {
 }
 
 /* ==========================================================================
-   Top Navigation Layout (TEFAS Style)
+   Top Navigation Layout (TEFAS Original Style)
    ========================================================================== */
 .tefas-layout {
   display: flex;
@@ -59,12 +67,12 @@ a {
 }
 
 .tefas-header {
-  background-color: rgba(7, 13, 26, 0.95);
-  backdrop-filter: blur(10px);
+  background-color: var(--header-bg);
   border-bottom: 1px solid var(--panel-border);
   position: sticky;
   top: 0;
   z-index: 50;
+  font-family: 'TefasFont', sans-serif;
 }
 
 .header-container {
@@ -77,140 +85,105 @@ a {
   justify-content: space-between;
 }
 
-.logo-area {
-  display: flex;
-  align-items: center;
-}
-
 .logo-link {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
-.logo-icon {
-  color: var(--text-white);
+.logo-link img {
+  height: 38px;
+  display: block;
 }
 
-.logo-text {
+.header-controls {
   display: flex;
-  flex-direction: column;
-}
-
-.logo-title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  line-height: 1;
-}
-
-.logo-subtitle {
-  font-size: 0.65rem;
-  color: var(--text-gray);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 2px;
+  align-items: center;
+  gap: 2rem;
+  flex: 1;
+  justify-content: space-between;
+  padding-left: 3rem;
 }
 
 .top-nav {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .nav-link {
-  color: var(--text-light);
-  font-size: 0.875rem; /* ~14px (TEFAS text-sm) */
-  line-height: 1.25rem;
-  font-weight: 500;
+  color: var(--text-white);
+  font-size: 0.85rem;
+  font-weight: 400;
   transition: color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   padding: 0.5rem 0;
-  position: relative;
+  cursor: pointer;
 }
 
-.nav-link:hover {
-  color: var(--text-white);
-}
-
-.nav-link.active {
-  color: var(--text-white);
-}
-
-.nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--accent-yellow);
-  border-radius: 2px;
+.nav-link:hover, .nav-link.active {
+  color: var(--accent-yellow);
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.25rem;
+}
+
+.icon-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-white);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.icon-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--accent-yellow);
 }
 
 .lang-selector {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   cursor: pointer;
-  color: var(--text-light);
-}
-
-.lang-selector:hover {
   color: var(--text-white);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  height: 32px;
 }
 
-.takas-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding-left: 2rem;
-  border-left: 1px solid var(--panel-border);
+.header-divider {
+  width: 1px;
+  height: 24px;
+  background-color: var(--panel-border);
 }
 
-.takas-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.takas-title {
-  font-size: 1rem;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.takas-subtitle {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-light);
-}
-
-.tefas-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.takas-logo img {
+  height: 36px;
+  display: block;
 }
 
 /* ==========================================================================
    Hero Section (Dashboard)
    ========================================================================== */
-.hero-section {
+.tefas-main {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1440px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 4rem 2rem;
-  position: relative;
-  overflow: hidden;
+  flex-direction: column;
 }
 
 .tefas-home {
@@ -219,64 +192,190 @@ a {
   flex-direction: column;
   background: url('/assets/photos/home-dark-banner.jpg') no-repeat center center;
   background-size: cover;
-  background-color: var(--bg-dark);
+  position: relative;
+}
+
+.hero-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 4rem 4rem;
+  position: relative;
 }
 
 .hero-content {
   flex: 1;
-  max-width: 600px;
+  max-width: 550px;
   z-index: 10;
 }
 
 .hero-title {
-  font-size: 3.5rem;
-  font-weight: 800;
-  line-height: 1.1;
+  font-size: 3rem;
+  font-weight: 600;
+  line-height: 1.2;
   margin-bottom: 1.5rem;
-  letter-spacing: -1px;
 }
 
-.text-highlight {
+.hero-title .text-highlight {
   color: var(--accent-yellow);
+  font-weight: 800;
 }
 
 .hero-subtitle {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: var(--text-light);
   line-height: 1.6;
   margin-bottom: 2.5rem;
+  max-width: 500px;
 }
 
 .hero-btn {
-  background-color: var(--panel-bg);
-  border: 1px solid var(--panel-border);
+  background-color: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
   color: var(--text-white);
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-full);
-  font-size: 1rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  border-radius: 99px;
+  font-size: 0.95rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
   cursor: pointer;
   transition: all var(--transition-fast);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
 }
 
 .hero-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255,255,255,0.15);
 }
 
 .btn-icon {
-  background-color: var(--bg-darker);
-  width: 32px;
-  height: 32px;
+  background-color: #1a1a1a;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--accent-yellow);
+  transition: all var(--transition-fast);
 }
 
-/* Removed inner page styles to clean up CSS */
+.hero-btn:hover .btn-icon {
+  transform: rotate(45deg);
+}
+
+/* Slider Arrows */
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  background-color: rgba(0,0,0,0.4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-white);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  z-index: 20;
+}
+
+.slider-arrow:hover {
+  background-color: var(--accent-yellow);
+  color: var(--bg-dark);
+}
+
+.slider-arrow.left { left: 1.5rem; }
+.slider-arrow.right { right: 1.5rem; }
+
+/* ==========================================================================
+   Footer / Partners & Ticker
+   ========================================================================== */
+.home-footer-area {
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  width: 100%;
+}
+
+.partner-logos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.5rem 2rem 2.5rem 2rem;
+}
+
+.partner-logos img {
+  height: 40px;
+  object-fit: contain;
+  opacity: 0.9;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+  transition: opacity var(--transition-fast);
+}
+
+.partner-logos img:hover {
+  opacity: 1;
+}
+
+.news-ticker-wrapper {
+  background-color: var(--header-bg);
+  border-top: 1px solid var(--panel-border);
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-label {
+  padding: 0 2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-white);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--header-bg);
+  z-index: 10;
+}
+
+.ticker-label .lucide {
+  color: var(--text-white);
+}
+
+.ticker-content {
+  flex: 1;
+  overflow: hidden;
+  color: var(--text-white);
+  font-size: 0.85rem;
+  border-left: 1px solid var(--panel-border);
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-content marquee {
+  display: flex;
+  align-items: center;
+}
+
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 3rem;
+}
+
+.ticker-item .lucide {
+  color: var(--text-gray);
+  width: 16px;
+  height: 16px;
+}
