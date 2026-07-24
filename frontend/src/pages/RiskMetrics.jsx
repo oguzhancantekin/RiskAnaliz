@@ -84,13 +84,15 @@ const RiskMetrics = () => {
   const [sortAsc, setSortAsc] = useState(true); //artan sıralama (true) azalan (false)
 
   // Filters
-  const [semsiyeTuru, setSemsiyeTuru] = useState('ALL'); //şemsiye türü filtresi
-  const [ratioFilters, setRatioFilters] = useState([]); //oran filtreleri
+  const [fonTuru, setFonTuru] = useState('Menkul Kıymet Yatırım Fonları'); // Fon türü (Arayüz)
+  const [kurucu, setKurucu] = useState('ALL'); // Kurucu (Arayüz)
+  const [semsiyeTuru, setSemsiyeTuru] = useState('ALL'); // Şemsiye türü filtresi (Aktif)
+  const [ratioFilters, setRatioFilters] = useState([]); // Oran filtreleri
 
   // Reset page to 1 when filters or page size change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, semsiyeTuru, ratioFilters, pageSize]);
+  }, [searchTerm, semsiyeTuru, ratioFilters, pageSize, fonTuru, kurucu]);
   // [] içindeki değerlerden herhangi biri değiştiğinde useEffect çalışır ve sayfa numarası 1 e çekilir.
 
 
@@ -200,47 +202,56 @@ const RiskMetrics = () => {
           <span className="current">Risk Metrikleri</span>
         </div>
 
-        {/* Title Bar & Export Toolbar */}
+        {/* Title Bar & Description */}
         <div className="tefas-title-bar">
           <div className="title-left">
             <h1 className="tefas-section-title">Fon Risk Metrikleri Hesaplama</h1>
-            <p className="tefas-section-desc">
-              Fon adına veya koduna tıklayarak TEFAS detaylı analiz sayfasına erişebilirsiniz.
-            </p>
-
-            {/* Export Toolbar Buttons */}
-            <div className="export-toolbar">
-              <button className="export-btn"><Copy size={13} /> Kopyala</button>
-              <button className="export-btn"><Printer size={13} /> Yazdır</button>
-              <button className="export-btn"><FileSpreadsheet size={13} /> Excel</button>
-              <button className="export-btn"><FileText size={13} /> CSV</button>
-              <button className="export-btn"><FileDown size={13} /> PDF</button>
-            </div>
-          </div>
-
-          {/* Top Search Input */}
-          <div className="title-right">
-            <div className="tefas-search-box">
-              <input
-                type="text"
-                placeholder="Aradığınız fonun kodunu veya adını yazınız"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <Search size={16} className="search-icon" />
-            </div>
-            <div className="search-meta-info">
-              <span>{sortedData.length} sonuç bulundu</span>
-            </div>
+            
           </div>
         </div>
 
-        {/* Dynamic Ratio Filter Card*/}
+        {/* Top TEFAS Filter Card (3 Dropdowns Row + Ratio Filters) */}
         <div className="dynamic-filter-card">
-          <div className="filter-card-body">
+          {/* Top Row: 3 Dropdowns */}
+          <div className="filter-card-body filter-three-cols">
+            
+            {/* 1. Fon Türü (Arayüz) */}
+            <div className="filter-col">
+              <label>Fon Türü</label>
+              <select
+                value={fonTuru}
+                onChange={(e) => setFonTuru(e.target.value)}
+                className="tefas-select-lg"
+              >
+                <option value="Menkul Kıymet Yatırım Fonları">Menkul Kıymet Yatırım Fonları</option>
+                <option value="Emeklilik Yatırım Fonları">Emeklilik Yatırım Fonları</option>
+                <option value="Borsa Yatırım Fonları">Borsa Yatırım Fonları</option>
+              </select>
+            </div>
 
-            {/* Umbrella Select Left */}
-            <div className="filter-col-semsiye">
+            {/* 2. Kurucu (Arayüz) */}
+            <div className="filter-col">
+              <label>Kurucu</label>
+              <select
+                value={kurucu}
+                onChange={(e) => setKurucu(e.target.value)}
+                className="tefas-select-lg"
+              >
+                <option value="ALL">Tümü</option>
+                <option value="AK PORTFÖY">Ak Portföy Yatırım Fonları</option>
+                <option value="AZİMUT PORTFÖY">Azimut Portföy Yatırım Fonları</option>
+                <option value="DENİZ PORTFÖY">Deniz Portföy Yatırım Fonları</option>
+                <option value="GARANTİ PORTFÖY">Garanti Portföy Yatırım Fonları</option>
+                <option value="İŞ PORTFÖY">İş Portföy Yatırım Fonları</option>
+                <option value="PARDUS PORTFÖY">Pardus Portföy Yatırım Fonları</option>
+                <option value="PUSULA PORTFÖY">Pusula Portföy Yatırım Fonları</option>
+                <option value="YAPI KREDİ PORTFÖY">Yapı Kredi Portföy Yatırım Fonları</option>
+                <option value="ZİRAAT PORTFÖY">Ziraat Portföy Yatırım Fonları</option>
+              </select>
+            </div>
+
+            {/* 3. Şemsiye Fon Türü (Aktif Filtre) */}
+            <div className="filter-col">
               <label>Şemsiye Fon Türü</label>
               <select
                 value={semsiyeTuru}
@@ -256,9 +267,16 @@ const RiskMetrics = () => {
               </select>
             </div>
 
-            {/* Dynamic Ratio Controls Right */}
+          </div>
+
+          {/* Ayırıcı Çizgi */}
+          <div className="filter-divider" />
+
+          {/* Bottom Row: Dynamic Ratio Filters Section */}
+          <div className="filter-ratio-section">
             <div className="filter-col-ratios">
-              <label>Oran Filtreleme</label>
+              <label>Oran Filtreleme (Sharpe, Yıllık Getiri, Volatilite, VaR, Beta, Alpha...)</label>
+              
               <div className="ratio-inputs-list">
                 {ratioFilters.map((rf, idx) => (
                   <div key={idx} className="ratio-input-group">
@@ -312,7 +330,7 @@ const RiskMetrics = () => {
               {/* Ratio Filter Action Buttons */}
               <div className="ratio-actions-row">
                 <button onClick={addRatioFilter} className="add-ratio-link-btn">
-                  + Oran Filtreleme
+                  + Oran Filtreleme Ekle
                 </button>
                 {ratioFilters.length > 0 && (
                   <button onClick={() => setRatioFilters([])} className="clear-ratios-link-btn">
@@ -329,15 +347,44 @@ const RiskMetrics = () => {
                 <ArrowRight size={16} />
               </button>
             </div>
-
           </div>
         </div>
 
-        {/* Sub-table Control Bar */}
-        <div className="table-sub-controls">
-          <div className="sub-controls-left"></div>
-          <div className="sub-controls-right">
+        {/* Title Bar: Title & Sub-Description Left, Search Box Right */}
+        <div className="tefas-title-bar">
+          <div className="title-left">
+            <h1 className="tefas-section-title">{fonTuru}</h1>
+            <p className="tefas-section-desc">
+              Fon adına veya koduna tıklayarak detay sayfasına erişebilirsiniz. (+) butonuna tıklayarak fonları karşılaştırma listenize ekleyebilirsiniz.
+            </p>
+          </div>
+
+          <div className="title-right">
+            <div className="tefas-search-box">
+              <input
+                type="text"
+                placeholder="Aradığınız fonun kodunu veya adını yazınız"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Search size={16} className="search-icon" />
+            </div>
+          </div>
+        </div>
+
+        {/* Export Toolbar Row: Export Buttons Left, Page Controls Right */}
+        <div className="export-toolbar-row">
+          <div className="export-buttons-group">
+            <button className="export-btn"><Copy size={13} /> Kopyala</button>
+            <button className="export-btn"><Printer size={13} /> Yazdır</button>
+            <button className="export-btn"><FileSpreadsheet size={13} /> Excel</button>
+            <button className="export-btn"><FileText size={13} /> CSV</button>
+            <button className="export-btn"><FileDown size={13} /> PDF</button>
+          </div>
+
+          <div className="toolbar-controls-right">
             <span className="sub-results-count">{sortedData.length} sonuç bulundu</span>
+
             <select
               value={pageSize}
               onChange={(e) => setPageSize(Number(e.target.value))}
@@ -348,6 +395,7 @@ const RiskMetrics = () => {
               <option value={50}>50 Öğe Göster</option>
               <option value={100}>100 Öğe Göster</option>
             </select>
+
             <button className="tefas-list-settings-btn">
               <span>Listeleme Ayarları</span>
               <SlidersHorizontal size={14} />
