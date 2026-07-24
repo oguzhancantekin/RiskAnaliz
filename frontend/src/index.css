@@ -21,21 +21,31 @@
 
 :root {
   /* TEFAS Official Color Tokens (Extracted from official TEFAS stylesheet) */
-  --bg-dark: #0d1117;           /* --color-surface-background: 13 17 23 */
-  --bg-darker: #141a22;         /* --color-surface-card: 20 26 34 */
-  --header-bg: #171f29;         /* --color-surface-control: 23 31 41 */
-  
-  --text-white: #f3f6fa;        /* --color-text-primary: 243 246 250 */
-  --text-light: #ccd4df;        /* --color-text-secondary: 204 212 223 */
-  --text-gray: #98a3b3;         /* --color-text-muted: 152 163 179 */
-  
-  --accent-yellow: #fdb817;     /* --color-brand-yellow: 253 195 45 */
+  --bg-dark: #0d1117;
+  /* --color-surface-background: 13 17 23 */
+  --bg-darker: #141a22;
+  /* --color-surface-card: 20 26 34 */
+  --header-bg: #171f29;
+  /* --color-surface-control: 23 31 41 */
+
+  --text-white: #f3f6fa;
+  /* --color-text-primary: 243 246 250 */
+  --text-light: #ccd4df;
+  /* --color-text-secondary: 204 212 223 */
+  --text-gray: #98a3b3;
+  /* --color-text-muted: 152 163 179 */
+
+  --accent-yellow: #fdb817;
+  /* --color-brand-yellow: 253 195 45 */
   --accent-yellow-hover: #e0a514;
-  --accent-blue: #2768b2;        /* --color-brand-primary: 39 104 178 */
+  --accent-blue: #2768b2;
+  /* --color-brand-primary: 39 104 178 */
   --accent-blue-hover: #2f7dc7;
-  
-  --panel-border: #334254;      /* --color-border-card-blue: 51 66 84 */
-  --control-border: #354a60;    /* --color-border-input: 53 74 96 */
+
+  --panel-border: #334254;
+  /* --color-border-card-blue: 51 66 84 */
+  --control-border: #354a60;
+  /* --color-border-input: 53 74 96 */
   --transition-fast: 200ms ease;
 }
 
@@ -125,7 +135,8 @@ a {
   cursor: pointer;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
   color: var(--accent-yellow);
 }
 
@@ -136,8 +147,8 @@ a {
 }
 
 .icon-btn {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   width: 32px;
   height: 32px;
@@ -150,7 +161,7 @@ a {
 }
 
 .icon-btn:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: var(--accent-yellow);
 }
 
@@ -161,8 +172,8 @@ a {
   font-size: 0.8rem;
   cursor: pointer;
   color: var(--text-white);
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   padding: 0.25rem 0.5rem;
   height: 32px;
@@ -235,8 +246,8 @@ a {
 }
 
 .hero-btn {
-  background-color: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.2);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--text-white);
   padding: 0.5rem 0.5rem 0.5rem 1.5rem;
   border-radius: 99px;
@@ -251,7 +262,7 @@ a {
 }
 
 .hero-btn:hover {
-  background-color: rgba(255,255,255,0.15);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .btn-icon {
@@ -277,7 +288,7 @@ a {
   transform: translateY(-50%);
   width: 44px;
   height: 44px;
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgba(0, 0, 0, 0.4);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -293,8 +304,13 @@ a {
   color: var(--bg-dark);
 }
 
-.slider-arrow.left { left: 1.5rem; }
-.slider-arrow.right { right: 1.5rem; }
+.slider-arrow.left {
+  left: 1.5rem;
+}
+
+.slider-arrow.right {
+  right: 1.5rem;
+}
 
 /* ==========================================================================
    Footer / Partners & Ticker
@@ -320,7 +336,7 @@ a {
   height: 40px;
   object-fit: contain;
   opacity: 0.9;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
   transition: opacity var(--transition-fast);
 }
 
@@ -523,7 +539,7 @@ a {
   color: var(--text-gray);
 }
 
-/* Dynamic Filter Card (TEFAS Official Replica) */
+/* Dynamic Filter Card */
 .dynamic-filter-card {
   background-color: var(--bg-darker);
   border: 1px solid var(--panel-border);
@@ -546,7 +562,8 @@ a {
   width: 280px;
 }
 
-.filter-col-semsiye label, .filter-col-ratios label {
+.filter-col-semsiye label,
+.filter-col-ratios label {
   font-size: 0.75rem;
   color: var(--text-gray);
   font-weight: 500;
@@ -589,8 +606,9 @@ a {
   height: 40px;
 }
 
-.ratio-select-metric, .ratio-select-op {
-  background: transparent;
+.ratio-select-metric,
+.ratio-select-op {
+  background: var(--header-bg);
   border: none;
   color: var(--text-white);
   font-size: 0.825rem;
@@ -701,7 +719,8 @@ a {
   color: var(--text-gray);
 }
 
-.tefas-page-size-select, .tefas-list-settings-btn {
+.tefas-page-size-select,
+.tefas-list-settings-btn {
   background-color: var(--header-bg);
   border: 1px solid var(--control-border);
   color: var(--text-white);
@@ -736,7 +755,7 @@ a {
 
 .tefas-blue-header-table {
   width: 100%;
-  min-width: 1350px;
+  min-width: 1420px;
   table-layout: fixed;
   border-collapse: collapse;
   font-size: 0.8rem;
@@ -805,33 +824,42 @@ a {
 }
 
 /* Fixed Column Width Classes */
-.td-action, .th-action {
-  width: 34px;
+.td-action,
+.th-action {
+  width: 32px;
   text-align: center;
   padding: 0.55rem 0.25rem !important;
 }
 
-.th-code, .td-code {
-  width: 75px;
+.th-code,
+.td-code {
+  width: 72px;
   text-align: center;
 }
 
-.th-name, .td-name {
-  width: 210px;
+.th-name,
+.td-name {
+  width: 195px;
 }
 
-.th-semsiye, .td-semsiye {
-  width: 170px;
+.th-semsiye,
+.td-semsiye {
+  width: 155px;
 }
 
-.th-risk, .td-risk {
-  width: 85px;
+.th-risk,
+.td-risk {
+  width: 80px;
   text-align: center;
   padding: 0.55rem 0.25rem !important;
 }
 
 .th-num {
-  width: 98px;
+  width: 95px;
+}
+
+.th-var {
+  width: 118px;
 }
 
 .add-btn {
@@ -897,7 +925,7 @@ a {
   color: #60a5fa;
 }
 
-/* Status Dot & Şemsiye */
+/* Şemsiye Fon Türü */
 .td-semsiye {
   display: flex;
   align-items: center;
@@ -908,13 +936,9 @@ a {
   white-space: nowrap;
 }
 
-.status-dot {
-  color: #10b981;
-  font-size: 0.55rem;
-}
-
 /* Risk Score Display Bar (1 / 7) */
-.th-risk, .td-risk {
+.th-risk,
+.td-risk {
   width: 60px;
   padding: 0.45rem 0.25rem !important;
 }
@@ -1091,4 +1115,3 @@ a {
   padding: 0 0.25rem;
   font-size: 0.8rem;
 }
-
