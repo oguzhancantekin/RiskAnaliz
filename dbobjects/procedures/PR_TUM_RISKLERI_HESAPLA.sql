@@ -2,8 +2,8 @@ CREATE OR REPLACE PROCEDURE PR_TUM_RISKLERI_HESAPLA(
     p_tarih IN DATE
 ) AS
 BEGIN
-    -- Aktif olan (durum=1) tüm fonlar için sırayla tüm risk prosedürlerini çağırır
-    FOR r_fon IN (SELECT FON_KODU FROM TB_FONLAR WHERE DURUM = 'AKTIF') LOOP
+    -- Tüm fonlar için sırayla tüm risk prosedürlerini çağırır
+    FOR r_fon IN (SELECT FON_KODU FROM TB_FONLAR) LOOP
         BEGIN
             -- 1. Temel Getiriler
             PR_GETIRI_HESAPLA(r_fon.FON_KODU, p_tarih);

@@ -2,9 +2,9 @@
 CREATE TABLE TB_FONLAR (
     FON_KODU VARCHAR2(10) PRIMARY KEY,
     FON_ADI VARCHAR2(255) NOT NULL,
+    FON_KATEGORI VARCHAR2(50),
     FON_TURU VARCHAR2(100),
-    KURUCU VARCHAR2(255),
-    DURUM VARCHAR2(20) DEFAULT 'AKTIF'
+    KURUCU VARCHAR2(255)
 );
 
 -- 2. TB_IS_GUNU Tablosu: Resmi tatilleri vb. ayırt etmek için takvim günlerini tutar.
@@ -60,8 +60,9 @@ CREATE TABLE TB_HESAPLAMA_LOG (
     SURE_MS NUMBER
 );
 
--- 7. TB_RISKSIZ_GETIRI Tablosu: Sharpe, Treynor vb. hesaplamalar için kullanılacak risksiz faiz oranları.
-CREATE TABLE TB_RISKSIZ_GETIRI (
-    TARIH DATE PRIMARY KEY,
-    ORAN NUMBER(15, 6) NOT NULL
+-- 7. TB_SISTEM_PARAMETRE Tablosu: Risksiz getiri oranı vb. sistem genelinde kullanılan parametreler.
+CREATE TABLE TB_SISTEM_PARAMETRE (
+    PARAMETRE_ADI VARCHAR2(100) PRIMARY KEY,
+    DEGER NUMBER(15, 6) NOT NULL,
+    ACIKLAMA VARCHAR2(500)
 );

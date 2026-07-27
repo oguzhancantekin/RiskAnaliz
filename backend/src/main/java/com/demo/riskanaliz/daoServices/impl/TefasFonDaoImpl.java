@@ -25,8 +25,8 @@ public class TefasFonDaoImpl implements TefasFonDao {
                 USING (SELECT ? AS FON_KODU, ? AS FON_ADI FROM DUAL) src
                 ON (f.FON_KODU = src.FON_KODU)
                 WHEN NOT MATCHED THEN
-                    INSERT (FON_KODU, FON_ADI, DURUM)
-                    VALUES (src.FON_KODU, src.FON_ADI, 'AKTIF')
+                    INSERT (FON_KODU, FON_ADI)
+                    VALUES (src.FON_KODU, src.FON_ADI)
                 """;
 
         int[] types = { Types.VARCHAR, Types.VARCHAR };
