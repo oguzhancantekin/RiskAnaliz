@@ -101,6 +101,20 @@ const RiskMetrics = () => {
     return Array.from(set).sort((a, b) => a.localeCompare(b, 'tr'));
   }, [data]);
 
+  // Unique Şemsiye / Alt Fon Türü listesi (Seçili Fon Kategorisine göre dinamik filtrelenir ve A-Z sıralanır)
+  const uniqueSemsiyeler = useMemo(() => {
+    const set = new Set();
+    data.forEach((item) => {
+      const kategori = getProp(item, 'FON_KATEGORI');
+      if (fonTuru !== 'ALL' && kategori !== fonTuru) return;
+      const s = getProp(item, 'SEMSIYE');
+      if (s && s.trim() !== '') {
+        set.add(s.trim());
+      }
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'tr'));
+  }, [data, fonTuru]);
+
   // Reset page to 1 when filters or page size change
   useEffect(() => {
     setCurrentPage(1);
@@ -181,7 +195,10 @@ const RiskMetrics = () => {
       const numVal = parseFloat(f.val);
       if (isNaN(numVal)) continue;
 
-      const itemVal = getPropNum(item, f.metric);
+      let itemVal = getPropNum(item, f.metric);
+      if (f.metric === 'VOLATILITE' || f.metric === 'DOWNSIDE_RISK') {
+        itemVal = itemVal * 100; // DB'de ondalıklı (örn: 0.1587) tutulan değerleri % katsayısına (15.87) çeviririz
+      }
       if (f.op === '>=' && !(itemVal >= numVal)) return false;
       if (f.op === '<=' && !(itemVal <= numVal)) return false;
       if (f.op === '>' && !(itemVal > numVal)) return false;
@@ -240,7 +257,10 @@ const RiskMetrics = () => {
               <label>Fon Türü</label>
               <select
                 value={fonTuru}
-                onChange={(e) => setFonTuru(e.target.value)}
+                onChange={(e) => {
+                  setFonTuru(e.target.value);
+                  setSemsiyeTuru('ALL');
+                }}
                 className="tefas-select-lg"
               >
                 <option value="ALL">Tümü</option>
@@ -265,20 +285,18 @@ const RiskMetrics = () => {
               </select>
             </div>
 
-            {/* 3. Şemsiye Fon Türü (Aktif Filtre) */}
+            {/* 3. Şemsiye Fon Türü / Alt Fon Türü (Dinamik Arayüz) */}
             <div className="filter-col">
-              <label>Şemsiye Fon Türü</label>
+              <label>{fonTuru === 'EMEKLILIK_FONU' || fonTuru === 'BORSA_FONU' || fonTuru=== 'ALL' ? 'Fon Türü' : 'Şemsiye Fon Türü'}</label>
               <select
                 value={semsiyeTuru}
                 onChange={(e) => setSemsiyeTuru(e.target.value)}
                 className="tefas-select-lg"
               >
                 <option value="ALL">Tümü</option>
-                <option value="Serbest Şemsiye Fonu">Serbest Şemsiye Fonu</option>
-                <option value="Para Piyasası Şemsiye Fonu">Para Piyasası Şemsiye Fonu</option>
-                <option value="Katılım Şemsiye Fonu">Katılım Şemsiye Fonu</option>
-                <option value="Borçlanma Araçları Şemsiye Fonu">Borçlanma Araçları Şemsiye Fonu</option>
-                <option value="Hisse Senedi Şemsiye Fonu">Hisse Senedi Şemsiye Fonu</option>
+                {uniqueSemsiyeler.map((s, idx) => (
+                  <option key={idx} value={s}>{s}</option>
+                ))}
               </select>
             </div>
 
@@ -443,7 +461,7 @@ const RiskMetrics = () => {
                       Fon Adı <ArrowUpDown size={11} />
                     </th>
                     <th onClick={() => handleHeaderSort('SEMSIYE')} className="sortable th-semsiye">
-                      Şemsiye Fon Türü <ArrowUpDown size={11} />
+                      {fonTuru === 'EMEKLILIK_FONU' || fonTuru === 'BORSA_FONU' || fonTuru==='ALL' ? 'Fon Türü' : 'Şemsiye Fon Türü'} <ArrowUpDown size={11} />
                     </th>
                     <th onClick={() => handleHeaderSort('VOLATILITE')} className="sortable text-center th-risk">
                       Risk Skoru <Info size={12} className="info-icon" /> <ArrowUpDown size={11} />
