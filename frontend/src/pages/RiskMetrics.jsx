@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   ChevronRight,
@@ -84,10 +84,22 @@ const RiskMetrics = () => {
   const [sortAsc, setSortAsc] = useState(true); //artan sıralama (true) azalan (false)
 
   // Filters
-  const [fonTuru, setFonTuru] = useState('Menkul Kıymet Yatırım Fonları'); // Fon türü (Arayüz)
+  const [fonTuru, setFonTuru] = useState('ALL'); // Fon türü / kategorisi (Arayüz)
   const [kurucu, setKurucu] = useState('ALL'); // Kurucu (Arayüz)
   const [semsiyeTuru, setSemsiyeTuru] = useState('ALL'); // Şemsiye türü filtresi (Aktif)
   const [ratioFilters, setRatioFilters] = useState([]); // Oran filtreleri
+
+  // Unique Kurucu listesi (Backend'den gelen veriden dinamik çekilir ve A-Z sıralanır)
+  const uniqueKurucular = useMemo(() => {
+    const set = new Set();
+    data.forEach((item) => {
+      const k = getProp(item, 'KURUCU');
+      if (k && k.trim() !== '') {
+        set.add(k.trim());
+      }
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'tr'));
+  }, [data]);
 
   // Reset page to 1 when filters or page size change
   useEffect(() => {
@@ -155,7 +167,15 @@ const RiskMetrics = () => {
     const semsiye = getProp(item, 'SEMSIYE');
     if (semsiyeTuru !== 'ALL' && semsiye !== semsiyeTuru) return false; // SEMSIYE, semsiyeTuru ile aynı değilse filtrele.
 
-    // 3. Dynamic Ratio Filters
+    // 3. Fon Kategorisi (Fon Türü) Filtresi
+    const kategori = getProp(item, 'FON_KATEGORI');
+    if (fonTuru !== 'ALL' && kategori !== fonTuru) return false;
+
+    // 4. Kurucu Filtresi
+    const kurucuVal = getProp(item, 'KURUCU');
+    if (kurucu !== 'ALL' && kurucuVal !== kurucu) return false;
+
+    // 5. Dynamic Ratio Filters
     for (let f of ratioFilters) {
       if (!f.val || f.val.trim() === '') continue;
       const numVal = parseFloat(f.val);
@@ -206,7 +226,7 @@ const RiskMetrics = () => {
         <div className="tefas-title-bar">
           <div className="title-left">
             <h1 className="tefas-section-title">Fon Risk Metrikleri Hesaplama</h1>
-            
+
           </div>
         </div>
 
@@ -214,8 +234,8 @@ const RiskMetrics = () => {
         <div className="dynamic-filter-card">
           {/* Top Row: 3 Dropdowns */}
           <div className="filter-card-body filter-three-cols">
-            
-            {/* 1. Fon Türü (Arayüz) */}
+
+            {/* 1. Fon Türü / Kategorisi (Dinamik Arayüz) */}
             <div className="filter-col">
               <label>Fon Türü</label>
               <select
@@ -223,13 +243,14 @@ const RiskMetrics = () => {
                 onChange={(e) => setFonTuru(e.target.value)}
                 className="tefas-select-lg"
               >
-                <option value="Menkul Kıymet Yatırım Fonları">Menkul Kıymet Yatırım Fonları</option>
-                <option value="Emeklilik Yatırım Fonları">Emeklilik Yatırım Fonları</option>
-                <option value="Borsa Yatırım Fonları">Borsa Yatırım Fonları</option>
+                <option value="ALL">Tümü</option>
+                <option value="YATIRIM_FONU">Menkul Kıymet Yatırım Fonları</option>
+                <option value="EMEKLILIK_FONU">Emeklilik Yatırım Fonları</option>
+                <option value="BORSA_FONU">Borsa Yatırım Fonları</option>
               </select>
             </div>
 
-            {/* 2. Kurucu (Arayüz) */}
+            {/* 2. Kurucu (Dinamik Arayüz) */}
             <div className="filter-col">
               <label>Kurucu</label>
               <select
@@ -237,16 +258,10 @@ const RiskMetrics = () => {
                 onChange={(e) => setKurucu(e.target.value)}
                 className="tefas-select-lg"
               >
-                <option value="ALL">Tümü</option>
-                <option value="AK PORTFÖY">Ak Portföy Yatırım Fonları</option>
-                <option value="AZİMUT PORTFÖY">Azimut Portföy Yatırım Fonları</option>
-                <option value="DENİZ PORTFÖY">Deniz Portföy Yatırım Fonları</option>
-                <option value="GARANTİ PORTFÖY">Garanti Portföy Yatırım Fonları</option>
-                <option value="İŞ PORTFÖY">İş Portföy Yatırım Fonları</option>
-                <option value="PARDUS PORTFÖY">Pardus Portföy Yatırım Fonları</option>
-                <option value="PUSULA PORTFÖY">Pusula Portföy Yatırım Fonları</option>
-                <option value="YAPI KREDİ PORTFÖY">Yapı Kredi Portföy Yatırım Fonları</option>
-                <option value="ZİRAAT PORTFÖY">Ziraat Portföy Yatırım Fonları</option>
+                <option value="ALL">Tümü </option>
+                {uniqueKurucular.map((k, idx) => (
+                  <option key={idx} value={k}>{k}</option>
+                ))}
               </select>
             </div>
 
@@ -276,7 +291,7 @@ const RiskMetrics = () => {
           <div className="filter-ratio-section">
             <div className="filter-col-ratios">
               <label>Oran Filtreleme (Sharpe, Yıllık Getiri, Volatilite, VaR, Beta, Alpha...)</label>
-              
+
               <div className="ratio-inputs-list">
                 {ratioFilters.map((rf, idx) => (
                   <div key={idx} className="ratio-input-group">
@@ -353,7 +368,12 @@ const RiskMetrics = () => {
         {/* Title Bar: Title & Sub-Description Left, Search Box Right */}
         <div className="tefas-title-bar">
           <div className="title-left">
-            <h1 className="tefas-section-title">{fonTuru}</h1>
+            <h1 className="tefas-section-title">
+              {fonTuru === 'ALL' ? 'Tüm Fonlar' :
+                fonTuru === 'YATIRIM_FONU' ? 'Menkul Kıymet Yatırım Fonları' :
+                  fonTuru === 'EMEKLILIK_FONU' ? 'Emeklilik Yatırım Fonları' :
+                    fonTuru === 'BORSA_FONU' ? 'Borsa Yatırım Fonları' : fonTuru}
+            </h1>
             <p className="tefas-section-desc">
               Fon adına veya koduna tıklayarak detay sayfasına erişebilirsiniz. (+) butonuna tıklayarak fonları karşılaştırma listenize ekleyebilirsiniz.
             </p>

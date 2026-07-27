@@ -24,7 +24,7 @@ public class RiskDaoImpl implements RiskDao {
         String sql = "SELECT r.FON_KODU, TO_CHAR(r.HESAPLAMA_TARIHI, 'YYYY-MM-DD') AS HESAPLAMA_TARIHI, " +
                      "r.BETA, r.ALPHA, r.SHARPE, r.SORTINO, r.TREYNOR, r.VOLATILITE, r.VAR_RMD, " +
                      "r.DOWNSIDE_RISK, r.DEGISIM_KATSAYISI, r.GUNLUK_GETIRI, r.YILLIK_GETIRI, " +
-                     "f.FON_ADI, f.FON_TURU AS SEMSIYE " +
+                     "f.FON_ADI, f.FON_TURU AS SEMSIYE, f.FON_KATEGORI, f.KURUCU " +
                      "FROM TB_RISK_SONUC r " +
                      "LEFT JOIN TB_FONLAR f ON r.FON_KODU = f.FON_KODU " +
                      "WHERE r.HESAPLAMA_TARIHI = (SELECT MAX(HESAPLAMA_TARIHI) FROM TB_RISK_SONUC) " +
