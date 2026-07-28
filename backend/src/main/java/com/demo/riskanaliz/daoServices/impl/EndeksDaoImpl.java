@@ -18,20 +18,8 @@ public class EndeksDaoImpl implements EndeksDao {
 
     @Override
     public void saveEndeksFiyatlari(List<Object[]> endeksList) {
-        // endeksList dizilimi -> [0: ENDEKS_KODU, 1: TARIH, 2: FIYAT]
-        String sql = """
-                MERGE INTO TB_ENDEKS_FIYAT e
-                USING (SELECT ? AS ENDEKS_KODU, ? AS TARIH, ? AS FIYAT FROM DUAL) src
-                ON (e.ENDEKS_KODU = src.ENDEKS_KODU AND e.TARIH = src.TARIH)
-                WHEN MATCHED THEN
-                    UPDATE SET e.FIYAT = src.FIYAT
-                WHEN NOT MATCHED THEN
-                    INSERT (ENDEKS_KODU, TARIH, FIYAT)
-                    VALUES (src.ENDEKS_KODU, src.TARIH, src.FIYAT)
-                """;
-
+        String sql = "CALL PR_SAVE_ENDEKS_FIYAT(?, ?, ?)";
         int[] types = { Types.VARCHAR, Types.DATE, Types.NUMERIC };
-        // Toplu batch gönderim hızlı olsun diye
         jdbcTemplate.batchUpdate(sql, endeksList, types);
     }
 }

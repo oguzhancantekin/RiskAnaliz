@@ -20,47 +20,34 @@ import java.util.List;
 public class TefasFonServiceImpl implements TefasFonService {
 
     private final TefasFonDao tefasFonDao;
-    // private final SimpleDateFormat dateFormat = new
-    // SimpleDateFormat("dd.MM.yyyy");
 
     public TefasFonServiceImpl(TefasFonDao tefasFonDao) {
         this.tefasFonDao = tefasFonDao;
     }
 
-    // @Transactional: Eğer kaydederken hata çıkarsa veritabanını geri alır
-    // (Rollback)
-    // Böylece yarım yamalak veri kaydedilmesini engeller.
+    // /api/tefas/upload (Tarihsel Fiyat Verileri Yükleme)
+    // Sadece günlük kapanış fiyatlarını işler ve saveFonFiyatlari (PR_SAVE_FON_FIYAT) çağırır.
     @Override
     @Transactional
     public void processTefasCsv(MultipartFile file) throws Exception {
-        List<Object[]> fonList = new ArrayList<>();
         List<Object[]> fiyatList = new ArrayList<>();
-
-        // TEFAS genelde gg.aa.yyyy formatında tarih verir
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-        // Yüklenen dosyayı utf-8 formatında okumak için açıyoruz
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
 
-            // TEFAS dosyasında ilk 3 satır "Dışa Aktarım Tarihi", "Toplam Kayıt Sayısı"
-            // gibi gereksiz bilgilerdir.
-            // Gerçek sütun başlıklarını bulana kadar (Fon Kodu, Fiyat vs.) satırları
-            // atlıyoruz.
             reader.mark(2048);
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains("Fon Kodu") && line.contains("Fiyat")) {
-                    reader.reset(); // Okuyucuyu başlık satırının en başına geri sar
+                    reader.reset();
                     break;
                 }
-                reader.mark(2048); // Bulamadıysak bir sonraki satır için işareti güncelle
+                reader.mark(2048);
             }
 
-            // İndirdiğin dosya virgülle ayrılmış, o yüzden DEFAULT (, virgül) formatını
-            // kullanıyoruz.
             CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
-                    .setHeader() // İlk satırı başlık olarak al (Tarih, Fon Kodu vb.)
+                    .setHeader()
                     .setSkipHeaderRecord(true)
                     .setIgnoreEmptyLines(true)
                     .build();
@@ -68,49 +55,36 @@ public class TefasFonServiceImpl implements TefasFonService {
             try (CSVParser parser = new CSVParser(reader, csvFormat)) {
                 for (CSVRecord record : parser) {
                     try {
-                        // Başlıklara göre hücre değerlerini çekiyoruz
                         String tarihStr = record.get("Tarih");
                         String fonKodu = record.get("Fon Kodu");
-                        String fonAdi = record.get("Fon Adı");
                         String fiyatStr = record.get("Fiyat");
 
-                        // Eğer fon kodu boşsa bu satırı atla
                         if (fonKodu == null || fonKodu.trim().isEmpty()) {
                             continue;
                         }
 
-                        // Yazıyı Veritabanı Tarih Formatına Çevir
                         java.util.Date parsedDate = dateFormat.parse(tarihStr);
                         java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
-
-                        // Yazıyı Virgüllü Rakama Çevir
                         Float fiyat = parseFloatSafe(fiyatStr);
 
-                        // Listelere paketle
-                        fonList.add(new Object[] { fonKodu, fonAdi });
                         fiyatList.add(new Object[] { fonKodu, sqlDate, fiyat });
 
                     } catch (Exception e) {
-                        // Hatalı satırları logla (arka planda konsolda görünür)
                         System.err.println("Satır okunurken hata: " + e.getMessage());
                     }
                 }
             }
         }
 
-        // Eğer hiç veri okunamadıysa sessizce başarılı dönmek yerine hata fırlat!
-        if (fonList.isEmpty() && fiyatList.isEmpty()) {
+        if (fiyatList.isEmpty()) {
             throw new Exception(
-                    "Dosya yüklenirken bir hata oluştu: Dosyadan HİÇ veri okunamadı! Lütfen dosyanın Sütun Başlıklarının (Tarih, Fon Kodu vb.) doğru olduğuna ve virgül (,) ile ayrıldığına emin ol. İstersen dosyayı not defteri ile açıp kontrol edebilirsin.");
+                    "Dosya yüklenirken bir hata oluştu: Dosyadan HİÇ fiyat verisi okunamadı! Lütfen sütun başlıklarının (Tarih, Fon Kodu, Fiyat) doğru olduğuna emin olun.");
         }
 
-        // Listeler dolduktan sonra veritabanına ulaştırılmak üzere DAO'ya gönderiyoruz
-        tefasFonDao.saveFonListesi(fonList);
+        // Sadece günlük fiyat geçmişini kaydediyoruz
         tefasFonDao.saveFonFiyatlari(fiyatList);
     }
 
-    // TEFAS sayıları Türkiye formatında (Örn: 3,1365) veriyor.
-    // Java ise (3.1365) Amerikan formatı anlar. Bu yüzden dönüştürüyoruz.
     private Float parseFloatSafe(String value) {
         if (value == null || value.trim().isEmpty()) {
             return null;
@@ -122,15 +96,16 @@ public class TefasFonServiceImpl implements TefasFonService {
         }
     }
 
+    // /api/tefas/upload-info (Fon Genel Bilgileri ve Tür Yükleme)
+    // Fon Kodu, Fon Adı ve Şemsiye Fon Türü bilgilerini alır ve saveFonListesi (PR_SAVE_FON) çağırır.
     @Override
     @Transactional
     public void updateFonTuruCsv(MultipartFile file) throws Exception {
-        List<Object[]> fonTuruList = new ArrayList<>();
+        List<Object[]> fonInfoList = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
 
-            // Gerçek sütun başlıklarını bulana kadar satırları atlıyoruz
             reader.mark(2048);
             String line;
             while ((line = reader.readLine()) != null) {
@@ -141,7 +116,6 @@ public class TefasFonServiceImpl implements TefasFonService {
                 reader.mark(2048);
             }
 
-            // Dosya virgülle ayrılmış
             CSVFormat csvFormat = CSVFormat.DEFAULT.builder()
                     .setHeader()
                     .setSkipHeaderRecord(true)
@@ -153,12 +127,12 @@ public class TefasFonServiceImpl implements TefasFonService {
                     try {
                         String fonKodu = record.get("Fon Kodu");
                         String fonTuru = record.get("Şemsiye Fon Türü");
+                        String fonAdi = record.isMapped("Fon Adı") ? record.get("Fon Adı") : null;
 
                         if (fonKodu != null && !fonKodu.trim().isEmpty() && fonTuru != null
                                 && !fonTuru.trim().isEmpty()) {
-                            // UPDATE sorgusundaki soru işaretleri sırasına göre paketliyoruz [FON_TURU,
-                            // FON_KODU]
-                            fonTuruList.add(new Object[] { fonTuru, fonKodu });
+                            // PR_SAVE_FON prosedürüne [FON_KODU, FON_ADI, FON_TURU] olarak yolluyoruz
+                            fonInfoList.add(new Object[] { fonKodu, fonAdi, fonTuru });
                         }
                     } catch (Exception e) {
                         System.err.println("Satır okunurken hata: " + e.getMessage());
@@ -167,11 +141,11 @@ public class TefasFonServiceImpl implements TefasFonService {
             }
         }
 
-        if (fonTuruList.isEmpty()) {
+        if (fonInfoList.isEmpty()) {
             throw new Exception(
-                    "Dosyadan Fon Türü verisi okunamadı! Sütun başlıklarının (Fon Kodu, Şemsiye Fon Türü) doğru olduğuna emin olun.");
+                    "Dosyadan Fon Künye/Türü verisi okunamadı! Sütun başlıklarının (Fon Kodu, Şemsiye Fon Türü) doğru olduğuna emin olun.");
         }
 
-        tefasFonDao.updateFonTuru(fonTuruList);
+        tefasFonDao.saveFonListesi(fonInfoList);
     }
 }

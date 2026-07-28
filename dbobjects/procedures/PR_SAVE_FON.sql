@@ -1,0 +1,17 @@
+CREATE OR REPLACE PROCEDURE PR_SAVE_FON(
+    p_fonkodu IN VARCHAR2,
+    p_fonadi IN VARCHAR2,
+    p_fonturu IN VARCHAR2
+) AS
+BEGIN
+    MERGE INTO TB_FONLAR f
+    USING (SELECT p_fonkodu AS FON_KODU, p_fonadi AS FON_ADI, p_fonturu AS FON_TURU FROM DUAL) src
+    ON (f.FON_KODU = src.FON_KODU)
+    WHEN MATCHED THEN
+        UPDATE SET f.FON_ADI = NVL(src.FON_ADI, f.FON_ADI),
+                   f.FON_TURU = NVL(src.FON_TURU, f.FON_TURU)
+    WHEN NOT MATCHED THEN
+        INSERT (FON_KODU, FON_ADI, FON_TURU)
+        VALUES (src.FON_KODU, src.FON_ADI, src.FON_TURU);
+END;
+/

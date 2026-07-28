@@ -3,12 +3,9 @@ package com.demo.riskanaliz.daoServices;
 import java.util.List;
 
 public interface TefasFonDao {
-    // Fon listesini (kod ve ad) kaydetmek veya varsa es geçmek için
+    // Fon künyesini (Kod, Ad, Şemsiye Fon Türü) kaydetmek veya güncellemek için (PR_SAVE_FON)
     void saveFonListesi(List<Object[]> fonList);
     
-    // Günlük fiyatları kaydetmek veya o günün fiyatı zaten varsa güncellemek için
+    // Günlük fiyatları kaydetmek veya güncellemek için (PR_SAVE_FON_FIYAT)
     void saveFonFiyatlari(List<Object[]> fiyatList);
-
-    // Genel Bilgiler Excel'inden gelen Şemsiye Fon Türü'nü veritabanına işlemek için
-    void updateFonTuru(List<Object[]> fonTuruList);
 }
