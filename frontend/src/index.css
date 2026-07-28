@@ -88,10 +88,10 @@ a {
 }
 
 .header-container {
-  max-width: 1440px;
+  max-width: 1880px;
   margin: 0 auto;
-  padding: 0 2rem;
-  height: 80px;
+  padding: 0 2.5rem;
+  height: 105px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -100,38 +100,38 @@ a {
 .logo-link {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .logo-link img {
-  height: 38px;
+  height: 48px;
   display: block;
 }
 
 .header-controls {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 2.5rem;
   flex: 1;
   justify-content: space-between;
-  padding-left: 3rem;
+  padding-left: 3.5rem;
 }
 
 .top-nav {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.8rem;
 }
 
 .nav-link {
   color: var(--text-white);
-  font-size: 0.85rem;
-  font-weight: 400;
+  font-size: 0.95rem;
+  font-weight: 500;
   transition: color var(--transition-fast);
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.5rem 0;
+  gap: 0.4rem;
+  padding: 0.75rem 0;
   cursor: pointer;
 }
 
@@ -143,15 +143,15 @@ a {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 .icon-btn {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  width: 32px;
-  height: 32px;
+  border-radius: 6px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -168,25 +168,26 @@ a {
 .lang-selector {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 0.8rem;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
   color: var(--text-white);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  height: 32px;
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  height: 38px;
 }
 
 .header-divider {
   width: 1px;
-  height: 24px;
+  height: 28px;
   background-color: var(--panel-border);
 }
 
 .takas-logo img {
-  height: 36px;
+  height: 44px;
   display: block;
 }
 
@@ -212,7 +213,7 @@ a {
   flex: 1;
   display: flex;
   align-items: center;
-  max-width: 1440px;
+  max-width: 1880px;
   margin: 0 auto;
   width: 100%;
   padding: 4rem 4rem;
@@ -326,10 +327,10 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
+  max-width: 1880px;
   margin: 0 auto;
   width: 100%;
-  padding: 1.5rem 2rem 2.5rem 2rem;
+  padding: 1.5rem 2.5rem 2.5rem 2.5rem;
 }
 
 .partner-logos img {
@@ -409,7 +410,7 @@ a {
 }
 
 .tefas-page-container {
-  max-width: 1440px;
+  max-width: 1880px;
   margin: 0 auto;
   width: 100%;
 }
@@ -468,7 +469,7 @@ a {
   font-size: 0.85rem;
   color: var(--text-gray);
   line-height: 1.5;
-  max-width: 650px;
+  max-width: 1000px;
 }
 
 /* Export Toolbar (Kopyala, Yazdır, Excel, CSV, PDF) & Fon Arama Hizaslama */

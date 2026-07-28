@@ -37,7 +37,7 @@ const getPropNum = (item, key) => { // item[key] o fonfan elde edilen değer,bil
 // Auto calculate TEFAS Risk Level (1-7) from Volatility
 const getRiskValue = (volatility) => {
   if (volatility === null || volatility === undefined) return { level: 1, text: '1 / 7', color: '#10b981', percent: 14 };
-  const vol = Math.abs(volatility * 100);
+  const vol = Math.abs(volatility * 100); // db de 0.02 gibi ondalıklı değerler tutuluyor, bunu % cinsine çevirmek için 100 ile çarpıyoruz.
   if (vol < 1.0) return { level: 1, text: '1 / 7', color: '#10b981', percent: 14 };
   if (vol < 3.0) return { level: 2, text: '2 / 7', color: '#10b981', percent: 28 };
   if (vol < 7.0) return { level: 3, text: '3 / 7', color: '#fbbf24', percent: 42 };
@@ -98,8 +98,8 @@ const RiskMetrics = () => {
         set.add(k.trim());
       }
     });
-    return Array.from(set).sort((a, b) => a.localeCompare(b, 'tr'));
-  }, [data]);
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'tr'));// localeCompare ile Türkçe karakterler için doğru sıralama yapılır
+  }, [data]); //dataya bak değiştiğinde uniqueKurucuları yeniden hesapla. Optimizasyoon için useMemo kullandık.
 
   // Unique Şemsiye / Alt Fon Türü listesi (Seçili Fon Kategorisine göre dinamik filtrelenir ve A-Z sıralanır)
   const uniqueSemsiyeler = useMemo(() => {
@@ -112,7 +112,7 @@ const RiskMetrics = () => {
         set.add(s.trim());
       }
     });
-    return Array.from(set).sort((a, b) => a.localeCompare(b, 'tr'));
+    return Array.from(set).sort((a, b) => a.localeCompare(b, 'tr'));// localeCompare ile Türkçe karakterler için doğru sıralama yapılır
   }, [data, fonTuru]);
 
   // Reset page to 1 when filters or page size change
@@ -167,7 +167,7 @@ const RiskMetrics = () => {
   };
 
   // Advanced Filtering Logic
-  const filteredData = data.filter((item) => {
+  const filteredData = data.filter((item) => {// burada .filter() kullandığımız için return false diye eleme yaparız. booelean döndürür
     const rawCode = getProp(item, 'FON_KODU');
     if (rawCode && EXCLUDED_FUNDS.includes(rawCode.toUpperCase())) return false; // FON_KODU EXCLUDED_FUNDS içindeyse filtrele. ALMA.
 
