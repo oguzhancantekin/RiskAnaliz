@@ -11,7 +11,8 @@ BEGIN
         WHERE FON_KODU = p_fonkodu
           AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih
     )
-    SELECT NVL(SQRT(SUM(POWER(LEAST(0, F_GETIRI), 2)) / COUNT(*)) * SQRT(252), 0)
+    -- Tıpkı Volatilitede (STDDEV_SAMP) olduğu gibi, burada da popülasyon (N) yerine örneklem (N-1) varyansını baz alıyoruz: COUNT(*) - 1
+    SELECT NVL(SQRT(SUM(POWER(LEAST(0, F_GETIRI), 2)) / (COUNT(*) - 1)) * SQRT(252), 0)
     INTO v_downside_risk
     FROM FonGetiri
     WHERE F_GETIRI IS NOT NULL;

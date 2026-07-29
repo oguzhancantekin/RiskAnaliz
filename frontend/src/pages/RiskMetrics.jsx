@@ -171,11 +171,23 @@ const RiskMetrics = () => {
     const rawCode = getProp(item, 'FON_KODU');
     if (rawCode && EXCLUDED_FUNDS.includes(rawCode.toUpperCase())) return false; // FON_KODU EXCLUDED_FUNDS içindeyse filtrele. ALMA.
 
-    // 1. Search term
-    const code = (rawCode || '').toLowerCase();
-    const name = getProp(item, 'FON_ADI').toLowerCase();
-    const search = searchTerm.toLowerCase();
-    if (search && !(code.includes(search) || name.includes(search))) return false; // searchTerm de FON_ADI veya FON_KODU içinde arama kelimesi yoksa filtrele.
+    // 1. Search term (Kelime başı eşleşmesi / Word boundary prefix matching)
+    // Bu sayede "aya" araması "hayat" kelimesini eşleştirmez, ama "Ayasofya" veya tek başına "Aya" kelimesini eşleştirir.
+    const search = searchTerm.trim().toLowerCase();
+    
+    if (search) {
+      const code = (rawCode || '').toLowerCase();
+      const name = getProp(item, 'FON_ADI').toLowerCase();
+      
+      // Regex: Arama kelimesi metnin en başında (^), VEYA bir boşluk/noktalama işaretinden ([\s,.-]) hemen sonra gelmeli.
+      const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const searchRegex = new RegExp('(^|[\\s,.-])' + escapeRegExp(search), 'i');
+      
+      const isCodeMatch = code === search || code.startsWith(search);
+      const isNameMatch = searchRegex.test(name);
+      
+      if (!(isCodeMatch || isNameMatch)) return false;
+    } // searchTerm de FON_ADI veya FON_KODU içinde arama kelimesi yoksa filtrele.
 
     // 2. Umbrella Type
     const semsiye = getProp(item, 'SEMSIYE');
@@ -211,6 +223,20 @@ const RiskMetrics = () => {
 
   // Sorting Logic
   const sortedData = [...filteredData].sort((a, b) => {
+    // 1. EXACT SEARCH MATCH PRIORITY (Arama yapıldıysa, kodu tam uyuşanı en üste al)
+    if (searchTerm && searchTerm.trim() !== '') {
+      const searchUpper = searchTerm.trim().toUpperCase();
+      const codeA = getProp(a, 'FON_KODU').toUpperCase();
+      const codeB = getProp(b, 'FON_KODU').toUpperCase();
+      
+      const aExactMatch = codeA === searchUpper;
+      const bExactMatch = codeB === searchUpper;
+      
+      if (aExactMatch && !bExactMatch) return -1;
+      if (!aExactMatch && bExactMatch) return 1;
+    }
+
+    // 2. Normal tablo başlıklarına göre sıralama
     let valA = getProp(a, sortField);
     let valB = getProp(b, sortField);
 

@@ -10,8 +10,9 @@ BEGIN
     FROM TB_RISK_SONUC
     WHERE FON_KODU = p_fonkodu AND HESAPLAMA_TARIHI = p_tarih;
 
-    v_rmd := (v_volatilite * 2.326 / SQRT(52)) * 100; --2.326 değeri yüzde 99 olarak hesaplar daha kesin konuşabiliriz. / Değeri 1.645 yaparsak %95 oranında hesaplarız.
-                                                      -- 1 haftada yüzde 99 ihtimalle max %v_rmd kadar kayıp yaşayabilirsiniz
+    -- Yıllık Volatilite (252 gün) üzerinden hesaplandığı için, 1 haftalık (5 iş günü) riske dönerken SQRT(52) yerine SQRT(5/252) kullanmak matematiksel olarak daha tutarlıdır.
+    -- Z-Score: %99 güven aralığı için tam değer 2.326348'dir.
+    v_rmd := (v_volatilite * 2.326348 * SQRT(5 / 252)) * 100;
         
     UPDATE TB_RISK_SONUC
     SET VAR_RMD = v_rmd
