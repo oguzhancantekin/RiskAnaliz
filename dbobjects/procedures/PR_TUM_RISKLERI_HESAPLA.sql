@@ -2,8 +2,12 @@ CREATE OR REPLACE PROCEDURE PR_TUM_RISKLERI_HESAPLA(
     p_tarih IN DATE
 ) AS
 BEGIN
-    -- Tüm fonlar için sırayla tüm risk prosedürlerini çağırır
-    FOR r_fon IN (SELECT FON_KODU FROM TB_FONLAR) LOOP
+    -- 0. Önce Akıllı Veri Sağlığı ve Anomali Tespit motorunu çalıştır
+    -- (NMG gibi %100 üstü günlük sıçrama yapan veya ölü fonları PASIF konuma al)
+    PR_FON_DURUM_GUNCELLE;
+
+    -- 1. Sadece veri sağlığı temiz olan AKTIF fonlar için risk oranlarını hesapla
+    FOR r_fon IN (SELECT FON_KODU FROM TB_FONLAR WHERE NVL(DURUM, 'AKTIF') = 'AKTIF') LOOP
         BEGIN
             -- 1. Temel Getiriler
             PR_GETIRI_HESAPLA(r_fon.FON_KODU, p_tarih);
@@ -23,9 +27,6 @@ BEGIN
             
         EXCEPTION
             WHEN OTHERS THEN
-                -- Bir fonda hata olursa diğer fonların hesaplanması kesilmesin diye Exception burada yakalanır
-                -- Opsiyonel: TB_HESAPLAMA_LOG tablosuna insert yapılabilir
-                -- DBMS_OUTPUT.PUT_LINE('HATA (Fon: ' || r_fon.FON_KODU || '): ' || SQLERRM);
                 NULL;
         END;
     END LOOP;

@@ -4,7 +4,8 @@ CREATE TABLE TB_FONLAR (
     FON_ADI VARCHAR2(255) NOT NULL,
     FON_KATEGORI VARCHAR2(50),
     FON_TURU VARCHAR2(100),
-    KURUCU VARCHAR2(255)
+    KURUCU VARCHAR2(255),
+    DURUM VARCHAR2(30) DEFAULT 'AKTIF'
 );
 
 -- 2. TB_IS_GUNU Tablosu: Resmi tatilleri vb. ayırt etmek için takvim günlerini tutar.
