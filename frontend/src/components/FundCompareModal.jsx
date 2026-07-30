@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Award, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { X, Award, AlertCircle, Eye, EyeOff, Sparkles } from 'lucide-react';
 
 const FUND_COLORS = [
   { stroke: '#3b82f6', fill: 'rgba(59, 130, 246, 0.3)', name: 'Mavi' },
@@ -140,6 +140,85 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds }) => {
     downside: findWinner('DOWNSIDE_RISK', true)
   };
 
+  const formatPercentText = (val) => `%${(Math.abs(val) * 100).toFixed(2).replace('.', ',')}`;
+
+  const generateSmartSummary = () => {
+    if (visibleFunds.length === 0) return "Analiz için fon seçimi bekleniyor...";
+
+    if (visibleFunds.length === 1) {
+      const f = visibleFunds[0];
+      const code = getPropStr(f, 'FON_KODU');
+      const beta = getPropNum(f, 'BETA');
+      const alpha = getPropNum(f, 'ALPHA');
+      const varRmd = getPropNum(f, 'VAR_RMD');
+      
+      return (
+        <span>
+          <strong>{code}</strong> fonu detaylı analizi: 
+          {beta > 1.15 ? ` Piyasaya göre agresif bir karaktere sahip (Beta: ${beta.toFixed(2)}). Yükselişlerde daha fazla kazandırma potansiyeli taşırken düşüşlerde risklidir.` : (beta < 0.85 ? ` Piyasaya göre defansif bir yapıda (Beta: ${beta.toFixed(2)}).` : ` Piyasa ile dengeli hareket ediyor (Beta: ${beta.toFixed(2)}).`)}
+          {alpha > 0.05 && ` Fon yöneticisi aktif yönetimiyle piyasanın üzerinde ekstra değer (Alpha) yaratmayı başarmış.`}
+          {varRmd < 0 && ` Tarihsel istatistiklere göre olağandışı kriz dönemlerinde tahmini maksimum kayıp riski (VaR) ${formatPercentText(varRmd)} seviyesindedir.`}
+        </span>
+      );
+    }
+
+    if (visibleFunds.length === 2) {
+      const f1 = visibleFunds[0];
+      const f2 = visibleFunds[1];
+      const c1 = getPropStr(f1, 'FON_KODU');
+      const c2 = getPropStr(f2, 'FON_KODU');
+
+      const r1 = getPropNum(f1, 'YILLIK_GETIRI');
+      const r2 = getPropNum(f2, 'YILLIK_GETIRI');
+      const s1 = getPropNum(f1, 'SHARPE');
+      const s2 = getPropNum(f2, 'SHARPE');
+      const v1 = getPropNum(f1, 'VOLATILITE');
+      const v2 = getPropNum(f2, 'VOLATILITE');
+      const d1 = getPropNum(f1, 'DOWNSIDE_RISK');
+      const d2 = getPropNum(f2, 'DOWNSIDE_RISK');
+
+      let returnWinner = r1 > r2 ? c1 : c2;
+      let safeWinner = v1 < v2 ? c1 : c2;
+      let downsideWinner = d1 < d2 ? c1 : c2;
+
+      // Close returns but different risk
+      if (Math.abs(r1 - r2) < 0.1 && Math.abs(s1 - s2) > 0.5) {
+        let effWinner = s1 > s2 ? c1 : c2;
+        let effLoser = s1 > s2 ? c2 : c1;
+        return <span>Her iki fon da benzer getiriler sunuyor. Ancak <strong>{effWinner}</strong> fonu bu getiriyi elde ederken yatırımcısını çok daha az strese sokuyor ve <strong>{effLoser}</strong> fonuna göre çok daha verimli (Yüksek Sharpe).</span>;
+      }
+
+      if (returnWinner !== downsideWinner) {
+        return <span><strong>{returnWinner}</strong> fonu daha yüksek getiri potansiyeli sunarken, olası piyasa düşüşlerinde (kriz anlarında) <strong>{downsideWinner}</strong> fonu çok daha korunaklı ve sakin bir liman (Düşük Downside Risk).</span>;
+      }
+
+      return <span>Kıyaslamaya göre <strong>{returnWinner}</strong> fonu hem getiri hem de risk yönetimi açısından rakibine üstünlük sağlamış görünüyor.</span>;
+    }
+
+    if (visibleFunds.length >= 3) {
+      let highestReturn = visibleFunds[0];
+      let lowestVol = visibleFunds[0];
+      let highestCV = visibleFunds[0]; 
+
+      visibleFunds.forEach(f => {
+        if (getPropNum(f, 'YILLIK_GETIRI') > getPropNum(highestReturn, 'YILLIK_GETIRI')) highestReturn = f;
+        if (getPropNum(f, 'VOLATILITE') < getPropNum(lowestVol, 'VOLATILITE')) lowestVol = f;
+        if (getPropNum(f, 'DEGISIM_KATSAYISI') > getPropNum(highestCV, 'DEGISIM_KATSAYISI')) highestCV = f;
+      });
+
+      const hc = getPropStr(highestReturn, 'FON_KODU');
+      const lc = getPropStr(lowestVol, 'FON_KODU');
+      const wcv = getPropStr(highestCV, 'FON_KODU');
+
+      return (
+        <span>
+          Seçtiğiniz fon grubu içinde; <strong>{hc}</strong> yüksek getiri arayanlar için lokomotif görevini üstlenirken, <strong>{lc}</strong> düşük volatilitesi ile portföyün defansif emniyet sübabı konumunda. 
+          {wcv !== hc && wcv !== lc && ` Dikkat: Seçtiğiniz fonlar arasında ${wcv}, aldığı riske göre yeterli getiri üretememiş (Yüksek Değişim Katsayısı) zayıf halka olarak öne çıkıyor.`}
+        </span>
+      );
+    }
+  };
+
   return (
     <div className="compare-modal-backdrop" onClick={onClose}>
       <div className="compare-modal-card" onClick={e => e.stopPropagation()}>
@@ -156,6 +235,15 @@ const FundCompareModal = ({ isOpen, onClose, selectedFunds }) => {
           <button className="compare-modal-close" onClick={onClose}>
             <X size={20} />
           </button>
+        </div>
+
+        {/* Smart Summary Box */}
+        <div className="smart-summary-container">
+          <Sparkles className="sparkle-icon" size={24} />
+          <div className="smart-summary-content">
+            <h4>Sanal Fon Danışmanı</h4>
+            <p>{generateSmartSummary()}</p>
+          </div>
         </div>
 
         {/* Modal Body: Split Layout */}
