@@ -7,7 +7,7 @@ BEGIN
     PR_FON_DURUM_GUNCELLE;
 
     -- 1. Sadece veri sağlığı temiz olan AKTIF fonlar için risk oranlarını hesapla
-    FOR r_fon IN (SELECT FON_KODU FROM TB_FONLAR WHERE NVL(DURUM, 'AKTIF') = 'AKTIF') LOOP
+    FOR r_fon IN (SELECT FON_KODU FROM TB_FONLAR WHERE NVL(DURUM, 'AKTIF') = 'AKTIF') LOOP --tüm fonlar için bu spleri çağırması performans olarak ne kadar sürüyor
         BEGIN
             -- 1. Temel Getiriler
             PR_GETIRI_HESAPLA(r_fon.FON_KODU, p_tarih);
