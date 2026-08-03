@@ -17,7 +17,7 @@ BEGIN
             LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH) AS DUNKU_FIYAT
         FROM TB_FON_FIYAT
         WHERE FON_KODU = p_fonkodu
-          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih
+          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih --
     )
     -- RAM'de oluşan bu tablodan (Bugün - Dün)/Dün formülüyle getiriyi anlık hesaplayıp,
     -- Doğrudan STDDEV_SAMP (Standart Sapma) değerini alıyor ve SQRT(252) ile çarpıyoruz.
