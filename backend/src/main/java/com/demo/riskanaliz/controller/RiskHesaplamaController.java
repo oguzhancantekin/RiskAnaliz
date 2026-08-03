@@ -16,7 +16,12 @@ import java.util.Map;
 public class RiskHesaplamaController {
 
     @Autowired
-    private RiskService riskService;
+private final RiskService riskService;
+
+    public RiskHesaplamaController(RiskService riskService) {
+        this.riskService = riskService;
+        System.out.println(" >>> 🚀 RISK HESAPLAMA controller NESNESİ SPRING TARAFINDAN OLUŞTURULDU! <<<");
+    }
 
     @PostMapping("/hesapla")
     public ResponseEntity<Map<String, String>> hesaplamayiBaslat(

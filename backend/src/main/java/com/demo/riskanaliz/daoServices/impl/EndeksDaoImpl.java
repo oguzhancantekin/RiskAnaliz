@@ -14,6 +14,7 @@ public class EndeksDaoImpl implements EndeksDao {
 
     public EndeksDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        System.out.println(" >>> 🚀 ENDEKS dao NESNESİ SPRING TARAFINDAN OLUŞTURULDU! <<<");
     }
 
     @Override

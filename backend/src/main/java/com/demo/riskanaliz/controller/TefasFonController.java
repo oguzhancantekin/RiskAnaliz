@@ -17,6 +17,7 @@ public class TefasFonController {
 
     public TefasFonController(TefasFonService tefasFonService) {
         this.tefasFonService = tefasFonService;
+        System.out.println(" >>> 🚀 TEFAS FON controller NESNESİ SPRING TARAFINDAN OLUŞTURULDU! <<<");
     }
 
     // POST isteği ile dosya fırlatacağımız uç (endpoint)
@@ -30,6 +31,7 @@ public class TefasFonController {
         try {
             // Servis katmanına dosyayı gönderiyoruz, gerisini o hallediyor
             tefasFonService.processTefasCsv(file);
+            System.out.println(">>> 📊 TEFAS FON verileri başarıyla işlendi! <<<");
 
             // İşlem başarılıysa Frontend'e veya Postman'a 200 OK ve mesaj dönüyoruz
             return ResponseEntity.ok(Map.of("message", "Dosya başarıyla çözümlendi ve veritabanına kaydedildi."));
@@ -51,6 +53,7 @@ public class TefasFonController {
 
         try {
             tefasFonService.updateFonTuruCsv(file);
+            System.out.println(">>> 📊 TEFAS FON bilgileri başarıyla güncellendi! <<<");
             return ResponseEntity
                     .ok(Map.of("message", "Tüm fonların Şemsiye Fon Türü veritabanında başarıyla güncellendi!"));
         } catch (Exception e) {

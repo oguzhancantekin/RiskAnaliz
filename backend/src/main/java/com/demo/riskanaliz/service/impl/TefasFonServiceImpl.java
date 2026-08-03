@@ -23,6 +23,8 @@ public class TefasFonServiceImpl implements TefasFonService {
 
     public TefasFonServiceImpl(TefasFonDao tefasFonDao) {
         this.tefasFonDao = tefasFonDao;
+                System.out.println(">>> 🚀 TEFAS FON servıce NESNESİ SPRING TARAFINDAN OLUŞTURULDU! <<<");
+
     }
 
     // /api/tefas/upload (Tarihsel Fiyat Verileri Yükleme)

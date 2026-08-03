@@ -17,6 +17,7 @@ public class EndeksController {
 
     public EndeksController(EndeksService endeksService) {
         this.endeksService = endeksService;
+        System.out.println(" >>> 🚀 ENDEKS controller NESNESİ SPRING TARAFINDAN OLUŞTURULDU! <<<");
     }
 
     // POST isteği ile dosya fırlatacağımız uç (endpoint)

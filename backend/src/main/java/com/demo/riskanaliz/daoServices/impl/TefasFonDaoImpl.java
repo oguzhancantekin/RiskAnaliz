@@ -14,6 +14,7 @@ public class TefasFonDaoImpl implements TefasFonDao {
 
     public TefasFonDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        System.out.println(">>> 🚀 TEFAS FON dao NESNESİ SPRING TARAFINDAN OLUŞTURULDU! <<<");
     }
 
     @Override

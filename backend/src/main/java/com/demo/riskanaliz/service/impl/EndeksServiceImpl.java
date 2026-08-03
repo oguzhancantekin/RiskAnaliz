@@ -23,6 +23,7 @@ public class EndeksServiceImpl implements EndeksService {
 
     public EndeksServiceImpl(EndeksDao endeksDao) {
         this.endeksDao = endeksDao;
+        System.out.println(">>> 🚀 ENDEKS servıce NESNESİ SPRING TARAFINDAN OLUŞTURULDU! <<<");
     }
 
     @Override

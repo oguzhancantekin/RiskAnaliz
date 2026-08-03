@@ -10,8 +10,13 @@ import java.util.Date;
 @Service
 public class RiskServiceImpl implements RiskService {
 
+    private final RiskDao riskDao;
+
     @Autowired
-    private RiskDao riskDao;
+    public RiskServiceImpl(RiskDao riskDao) {
+        this.riskDao = riskDao;
+        System.out.println(">>> 🚀 RISK servıce NESNESİ SPRING TARAFINDAN OLUŞTURULDU! <<<");
+    }
 
     @Override
     public void hesaplamayiBaslat(Date tarih) {

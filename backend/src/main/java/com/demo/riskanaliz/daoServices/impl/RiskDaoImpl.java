@@ -17,7 +17,12 @@ import java.util.Map;
 public class RiskDaoImpl implements RiskDao {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+
+    public RiskDaoImpl(JdbcTemplate jdbcTemplate){
+        this.jdbcTemplate = jdbcTemplate;
+        System.out.println(">>> 🚀 RISK dao NESNESİ SPRING TARAFINDAN OLUŞTURULDU! <<<");
+    }
 
     @Override
     public void tumRiskleriHesapla(Date tarih) {
