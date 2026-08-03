@@ -43,6 +43,7 @@ public class RiskHesaplamaController {
         
         try {
             java.util.List<Map<String, Object>> sonuclar = riskService.getSonuclar(fonKodu);
+            // aynı şekilde buraki veri modeli
             return ResponseEntity.ok(sonuclar);
         } catch (Exception e) {
             e.printStackTrace();

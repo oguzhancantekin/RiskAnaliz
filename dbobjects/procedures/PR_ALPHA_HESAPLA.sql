@@ -24,7 +24,7 @@ BEGIN
                ROW_NUMBER() OVER (ORDER BY TARIH DESC) as rn_desc
         FROM TB_ENDEKS_FIYAT
         WHERE ENDEKS_KODU = 'BIST100'
-          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih
+          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih --buradaki add_months işlemini select dışında yapalım TB_ENDEKS_FIYAT tablosuna tarih indeksi koymuşsun onu engelliyor.
     )
     SELECT ( (SELECT FIYAT FROM EndeksFiyatlar WHERE rn_desc = 1) - (SELECT FIYAT FROM EndeksFiyatlar WHERE rn_asc = 1) ) 
            / NULLIF((SELECT FIYAT FROM EndeksFiyatlar WHERE rn_asc = 1), 0)

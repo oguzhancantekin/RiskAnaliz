@@ -35,6 +35,7 @@ public class RiskDaoImpl implements RiskDao {
         
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> list = (List<Map<String, Object>>) out.get("p_cursor");
+        // Burada dönen sonuçların tipleri anlaşılır değil bir model katmanı oluşturup veri modellerini belirlemen hem dbden gelen veri alanlarını valide edecek hem takasbank yapısına daha uygun olacaktır.
 
         return list != null ? list : new ArrayList<>();
     }

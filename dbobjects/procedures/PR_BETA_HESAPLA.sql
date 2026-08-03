@@ -14,7 +14,7 @@ BEGIN
             (BIRIM_FIYAT - LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH)) / NULLIF(LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH), 0) AS F_GETIRI
         FROM TB_FON_FIYAT
         WHERE FON_KODU = p_fonkodu
-          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih
+          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih --add months burda da
     ),
     EndeksGetiri AS (
         SELECT 
