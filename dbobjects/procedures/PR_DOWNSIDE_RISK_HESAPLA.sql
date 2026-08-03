@@ -9,7 +9,7 @@ BEGIN
             (BIRIM_FIYAT - LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH)) / NULLIF(LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH), 0) AS F_GETIRI
         FROM TB_FON_FIYAT
         WHERE FON_KODU = p_fonkodu
-          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih
+          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih -- add months
     )
     -- Tıpkı Volatilitede (STDDEV_SAMP) olduğu gibi, burada da popülasyon (N) yerine örneklem (N-1) varyansını baz alıyoruz: COUNT(*) - 1
     SELECT NVL(SQRT(SUM(POWER(LEAST(0, F_GETIRI), 2)) / (COUNT(*) - 1)) * SQRT(252), 0)
