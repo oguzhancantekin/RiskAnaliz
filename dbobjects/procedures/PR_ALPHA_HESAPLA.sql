@@ -7,7 +7,10 @@ CREATE OR REPLACE PROCEDURE PR_ALPHA_HESAPLA(
     v_beta NUMBER;
     v_endeks_getiri NUMBER;
     v_alpha NUMBER;
+    v_baslangic_tarihi DATE;
 BEGIN
+    v_baslangic_tarihi := ADD_MONTHS(p_tarih, -12);
+
     -- Sistem parametrelerinden Risksiz Getiri oranını (Örn: 42) çekip yüzdeye (0.42) çeviriyoruz
     SELECT DEGER / 100 INTO v_risksiz_getiri 
     FROM TB_SISTEM_PARAMETRE 
@@ -24,7 +27,7 @@ BEGIN
                ROW_NUMBER() OVER (ORDER BY TARIH DESC) as rn_desc
         FROM TB_ENDEKS_FIYAT
         WHERE ENDEKS_KODU = 'BIST100'
-          AND TARIH BETWEEN ADD_MONTHS(p_tarih, -12) AND p_tarih
+          AND TARIH BETWEEN v_baslangic_tarihi AND p_tarih
     )
     SELECT ( (SELECT FIYAT FROM EndeksFiyatlar WHERE rn_desc = 1) - (SELECT FIYAT FROM EndeksFiyatlar WHERE rn_asc = 1) ) 
            / NULLIF((SELECT FIYAT FROM EndeksFiyatlar WHERE rn_asc = 1), 0)
