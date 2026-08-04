@@ -1,6 +1,8 @@
 package com.demo.riskanaliz.service;
 
+import com.demo.riskanaliz.dto.RiskSonucDTO;
 import java.util.Date;
+import java.util.List;
 
 public interface RiskService {
     /**
@@ -14,5 +16,5 @@ public interface RiskService {
      * @param fonKodu Opsiyonel fon kodu
      * @return Risk sonuçları listesi
      */
-    java.util.List<java.util.Map<String, Object>> getSonuclar(String fonKodu);
+    List<RiskSonucDTO> getSonuclar(String fonKodu);
 }

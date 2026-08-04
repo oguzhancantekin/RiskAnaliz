@@ -1,6 +1,7 @@
 package com.demo.riskanaliz.controller;
 
 import com.demo.riskanaliz.service.RiskService;
+import com.demo.riskanaliz.dto.RiskSonucDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -43,12 +45,12 @@ private final RiskService riskService;
     }
 
     @GetMapping("/sonuclar")
-    public ResponseEntity<java.util.List<Map<String, Object>>> getSonuclar(
+    public ResponseEntity<List<RiskSonucDTO>> getSonuclar(
             @RequestParam(value = "fonKodu", required = false) String fonKodu) {
         
         try {
-            java.util.List<Map<String, Object>> sonuclar = riskService.getSonuclar(fonKodu);
-            return ResponseEntity.ok(sonuclar);
+            List<RiskSonucDTO> sonuclar1 = riskService.getSonuclar(fonKodu);
+            return ResponseEntity.ok(sonuclar1);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

@@ -2,8 +2,10 @@ package com.demo.riskanaliz.daoServices.impl;
 
 import com.demo.riskanaliz.daoServices.RiskDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import com.demo.riskanaliz.dto.RiskSonucDTO;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
@@ -31,15 +33,15 @@ public class RiskDaoImpl implements RiskDao {
     }
 
     @Override
-    public List<Map<String, Object>> getSonuclar(String fonKodu) {
+    public List<RiskSonucDTO> getSonuclar(String fonKodu) {
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("PR_GET_RISK_SONUCLARI")
-                .returningResultSet("p_cursor", new ColumnMapRowMapper());
+                .returningResultSet("p_cursor", BeanPropertyRowMapper.newInstance(RiskSonucDTO.class));
 
         Map<String, Object> out = jdbcCall.execute(new MapSqlParameterSource("p_fonkodu", fonKodu));
         
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> list = (List<Map<String, Object>>) out.get("p_cursor");
+        List<RiskSonucDTO> list = (List<RiskSonucDTO>) out.get("p_cursor");
 
         return list != null ? list : new ArrayList<>();
     }

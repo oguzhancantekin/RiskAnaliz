@@ -1,6 +1,8 @@
 package com.demo.riskanaliz.daoServices;
 
 import java.util.Date;
+import java.util.List;
+import com.demo.riskanaliz.dto.RiskSonucDTO;
 
 public interface RiskDao {
     /**
@@ -12,7 +14,7 @@ public interface RiskDao {
     /**
      * Veritabanından hesaplanmış risk sonuçlarını getirir.
      * @param fonKodu Opsiyonel fon kodu filtresi (boş ise tümünü getirir)
-     * @return Tablo satırlarını Map listesi olarak döner
+     * @return Risk sonuçları listesi
      */
-    java.util.List<java.util.Map<String, Object>> getSonuclar(String fonKodu);
+    List<RiskSonucDTO> getSonuclar(String fonKodu);
 }
