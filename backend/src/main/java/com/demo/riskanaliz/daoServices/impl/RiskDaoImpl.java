@@ -28,21 +28,31 @@ public class RiskDaoImpl implements RiskDao {
 
     @Override
     public void tumRiskleriHesapla(Date tarih) {
+        // '?' işareti, dışarıdan (parametre olarak) değer geleceğini belirtir.
         String sql = "CALL PR_TUM_RISKLERI_HESAPLA(?)";
+        // jdbcTemplate objesi ile hazırlanan SQL komutu çalıştırılır (execute edilir) 
+        // ve methoda gelen 'tarih' argümanı '?' yerine parametre olarak verilir.
         jdbcTemplate.update(sql, tarih);
     }
 
     @Override
     public List<RiskSonucDTO> getSonuclar(String fonKodu) {
+        // Veritabanından cursor dönen bir Stored Procedure çağırmak için
+        // Spring JDBC'nin SimpleJdbcCall sınıfını kullanıyoruz.
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("PR_GET_RISK_SONUCLARI")
+// Prosedürün döndüreceği 'p_cursor' adlı OUT parametresini yakalıyoruz.
+// BeanPropertyRowMapper ile veritabanından dönen sütun isimlerini RiskSonucDTO sınıfındaki alan isimleriyle otomatik eşleştiriyoruz.
                 .returningResultSet("p_cursor", BeanPropertyRowMapper.newInstance(RiskSonucDTO.class));
 
+        // Prosedüre varsa 'fonKodu' parametresini göndererek komutu çalıştırıyoruz.
         Map<String, Object> out = jdbcCall.execute(new MapSqlParameterSource("p_fonkodu", fonKodu));
         
+        // Dönen Map içerisinden eşleştirilmiş DTO listesini çıkarıyoruz.
         @SuppressWarnings("unchecked")
         List<RiskSonucDTO> list = (List<RiskSonucDTO>) out.get("p_cursor");
 
+        // Null pointer hatası (NPE) almamak için liste boşsa (null) boş bir liste dönüyoruz.
         return list != null ? list : new ArrayList<>();
     }
 }

@@ -7,7 +7,7 @@ BEGIN
     UPDATE TB_FONLAR 
     SET DURUM = 'PASIF'
     WHERE FON_KODU IN (
-        SELECT DISTINCT FON_KODU 
+        SELECT DISTINCT FON_KODU  -- Distinct ile aynı fon kodunun birden fazla fiyat kaydı olsa da sadece bir kez PASIF yapılmasını sağlıyoruz
         FROM TB_FON_FIYAT 
         WHERE BIRIM_FIYAT <= 0
     );

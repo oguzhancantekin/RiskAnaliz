@@ -17,7 +17,7 @@ public class RiskServiceImpl implements RiskService {
     private RiskDao riskDao;
 
     @Override
-    @Transactional
+    @Transactional // Bu metodun bir veritabanı transaction (işlem) bloğu içinde çalışmasını sağlar. Hata olursa tüm veritabanı işlemleri geri alınır (rollback).
     public void hesaplamayiBaslat(Date tarih) {
         if (tarih == null) {
             throw new IllegalArgumentException("Hesaplama tarihi boş olamaz!");
@@ -32,6 +32,7 @@ public class RiskServiceImpl implements RiskService {
 
     @Override
     public List<RiskSonucDTO> getSonuclar(String fonKodu) {
+        // Şu an doğrudan Data Access Object (DAO) katmanına yönlendirme yapıyor.
         return riskDao.getSonuclar(fonKodu);
     }
 }

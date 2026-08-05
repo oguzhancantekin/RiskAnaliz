@@ -18,8 +18,6 @@ import {
   X
 } from 'lucide-react';
 
-const EXCLUDED_FUNDS = ['NMG', 'OSF', 'HUS', 'PDR', 'ZJR', 'UZY'];
-
 // Helper for case-insensitive DB property access
 const getProp = (item, key) => {
   if (!item) return '';
@@ -168,24 +166,20 @@ const RiskMetrics = () => {
 
   // Advanced Filtering Logic
   const filteredData = data.filter((item) => {// burada .filter() kullandığımız için return false diye eleme yaparız. booelean döndürür
-    const rawCode = getProp(item, 'FON_KODU');
-    if (rawCode && EXCLUDED_FUNDS.includes(rawCode.toUpperCase())) return false; // FON_KODU EXCLUDED_FUNDS içindeyse filtrele. ALMA.
-
-    // 1. Search term (Kelime başı eşleşmesi / Word boundary prefix matching)
-    // Bu sayede "aya" araması "hayat" kelimesini eşleştirmez, ama "Ayasofya" veya tek başına "Aya" kelimesini eşleştirir.
     const search = searchTerm.trim().toLowerCase();
-    
+
     if (search) {
+      const rawCode = getProp(item, 'FON_KODU');
       const code = (rawCode || '').toLowerCase();
       const name = getProp(item, 'FON_ADI').toLowerCase();
-      
+
       // Regex: Arama kelimesi metnin en başında (^), VEYA bir boşluk/noktalama işaretinden ([\s,.-]) hemen sonra gelmeli.
       const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const searchRegex = new RegExp('(^|[\\s,.-])' + escapeRegExp(search), 'i');
-      
+
       const isCodeMatch = code === search || code.startsWith(search);
       const isNameMatch = searchRegex.test(name);
-      
+
       if (!(isCodeMatch || isNameMatch)) return false;
     } // searchTerm de FON_ADI veya FON_KODU içinde arama kelimesi yoksa filtrele.
 
@@ -228,10 +222,10 @@ const RiskMetrics = () => {
       const searchUpper = searchTerm.trim().toUpperCase();
       const codeA = getProp(a, 'FON_KODU').toUpperCase();
       const codeB = getProp(b, 'FON_KODU').toUpperCase();
-      
+
       const aExactMatch = codeA === searchUpper;
       const bExactMatch = codeB === searchUpper;
-      
+
       if (aExactMatch && !bExactMatch) return -1;
       if (!aExactMatch && bExactMatch) return 1;
     }
@@ -313,7 +307,7 @@ const RiskMetrics = () => {
 
             {/* 3. Şemsiye Fon Türü / Alt Fon Türü (Dinamik Arayüz) */}
             <div className="filter-col">
-              <label>{fonTuru === 'EMEKLILIK_FONU' || fonTuru === 'BORSA_FONU' || fonTuru=== 'ALL' ? 'Fon Türü' : 'Şemsiye Fon Türü'}</label>
+              <label>{fonTuru === 'EMEKLILIK_FONU' || fonTuru === 'BORSA_FONU' || fonTuru === 'ALL' ? 'Fon Türü' : 'Şemsiye Fon Türü'}</label>
               <select
                 value={semsiyeTuru}
                 onChange={(e) => setSemsiyeTuru(e.target.value)}
@@ -487,7 +481,7 @@ const RiskMetrics = () => {
                       Fon Adı <ArrowUpDown size={11} />
                     </th>
                     <th onClick={() => handleHeaderSort('SEMSIYE')} className="sortable th-semsiye">
-                      {fonTuru === 'EMEKLILIK_FONU' || fonTuru === 'BORSA_FONU' || fonTuru==='ALL' ? 'Fon Türü' : 'Şemsiye Fon Türü'} <ArrowUpDown size={11} />
+                      {fonTuru === 'EMEKLILIK_FONU' || fonTuru === 'BORSA_FONU' || fonTuru === 'ALL' ? 'Fon Türü' : 'Şemsiye Fon Türü'} <ArrowUpDown size={11} />
                     </th>
                     <th onClick={() => handleHeaderSort('VOLATILITE')} className="sortable text-center th-risk">
                       Risk Skoru <Info size={12} className="info-icon" /> <ArrowUpDown size={11} />
