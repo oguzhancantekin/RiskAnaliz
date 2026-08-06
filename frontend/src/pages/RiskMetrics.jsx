@@ -483,35 +483,35 @@ const RiskMetrics = () => {
                     <th onClick={() => handleHeaderSort('SEMSIYE')} className="sortable th-semsiye">
                       {fonTuru === 'EMEKLILIK_FONU' || fonTuru === 'BORSA_FONU' || fonTuru === 'ALL' ? 'Fon Türü' : 'Şemsiye Fon Türü'} <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('VOLATILITE')} className="sortable text-center th-risk">
-                      Risk Skoru <Info size={12} className="info-icon" /> <ArrowUpDown size={11} />
+                    <th onClick={() => handleHeaderSort('VOLATILITE')} className="sortable text-center th-risk" title="Risk skoru, fonun volatilite değerine göre 1 ile 7 arasında hesaplanır. 1 en düşük risk, 7 en yüksek riski temsil eder.">
+                      Risk Skoru  <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('YILLIK_GETIRI')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('YILLIK_GETIRI')} className="sortable text-right th-num" title="Yıllık getiri, fonun bir yıl boyunca elde ettiği toplam getiriyi ifade eder.">
                       Yıllık Getiri <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('VOLATILITE')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('VOLATILITE')} className="sortable text-right th-num" title="Volatilite, fonun getirisinin zaman içindeki dalgalanma derecesini ölçer. Yüksek volatilite, fonun getirilerinin daha değişken olduğunu gösterir.">
                       Volatilite <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('DOWNSIDE_RISK')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('DOWNSIDE_RISK')} className="sortable text-right th-num" title="Aşağı Yönlü Risk: Fonun sadece kaybettiren günlerdeki düşüş şiddetini ölçer. Yüksek değer, olumsuz piyasa koşullarında daha yüksek zarar riski demektir.">
                       Downside Risk <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('BETA')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('BETA')} className="sortable text-right th-num" title="Fonun beta değerini gösterir. Beta, fonun piyasa riskine duyarlılığını ölçer. Beta değeri 1'den büyükse fon, piyasa hareketlerine göre daha volatil, 1'den küçükse daha az volatil demektir.">
                       Beta <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('SHARPE')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('SHARPE')} className="sortable text-right th-num" title="Fonun sharpe değerini gösterir. Sharpe, fonun risk ayarlı getirisini ölçer. Sharpe değeri ne kadar yüksekse fonun risk ayarlı getirisi o kadar iyidir.">
                       Sharpe <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('SORTINO')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('SORTINO')} className="sortable text-right th-num" title="Fonun sortino değerini gösterir. Sortino, fonun downside riskine duyarlı getirisini ölçer.  Sortino değeri ne kadar yüksekse fonun downside riskine duyarlı getirisi o kadar iyidir.">
                       Sortino <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('TREYNOR')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('TREYNOR')} className="sortable text-right th-num" title="Fonun treynor değerini gösterir. Treynor, fonun risk ayarlı getirisini ölçer. Treynor değeri ne kadar yüksekse fonun risk ayarlı getirisi o kadar iyidir.">
                       Treynor <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('ALPHA')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('ALPHA')} className="sortable text-right th-num" title="Alpha, fonun risk ayarlı getirisini ölçer. Pozitif alpha, fonun beklenen getirisinin üzerinde performans gösterdiğini, negatif alpha ise altında performans gösterdiğini ifade eder.">
                       Alpha <ArrowUpDown size={11} />
                     </th>
                     <th onClick={() => handleHeaderSort('VAR_RMD')} className="sortable text-right th-num th-var" title="1 haftada %99 ihtimalle maruz kalınabilecek maksimum kayıp oranı">
-                      Haftalık VaR (%99) <Info size={11} className="info-icon" /> <ArrowUpDown size={11} />
+                      Haftalık VaR (%99)  <ArrowUpDown size={11} />
                     </th>
                   </tr>
                 </thead>
