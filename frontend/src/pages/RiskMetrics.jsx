@@ -20,6 +20,7 @@ import {
   X
 } from 'lucide-react';
 import FundCompareModal from '../components/FundCompareModal';
+import RiskInfoModal from '../components/RiskInfoModal';
 
 const EXCLUDED_FUNDS = ['NMG', 'OSF', 'HUS', 'PDR', 'ZJR', 'UZY'];
 
@@ -121,6 +122,7 @@ const RiskMetrics = () => {
   // Comparison Selection Basket & Modal
   const [selectedFunds, setSelectedFunds] = useState([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
   // Reset page to 1 when filters or page size change
   useEffect(() => {
@@ -173,15 +175,15 @@ const RiskMetrics = () => {
     setRatioFilters(updated); // güncel diziyi setRatioFilters state ine set eder.
   };
 
-  // Toggle fund selection for comparison basket (max 5)
+  // Toggle fund selection for comparison basket (max 3)
   const toggleSelectFund = (fund) => {
     const code = getProp(fund, 'FON_KODU');
     const exists = selectedFunds.some(f => getProp(f, 'FON_KODU') === code);
     if (exists) {
       setSelectedFunds(selectedFunds.filter(f => getProp(f, 'FON_KODU') !== code));
     } else {
-      if (selectedFunds.length >= 5) {
-        alert('En fazla 5 fonu aynı anda karşılaştırabilirsiniz.');
+      if (selectedFunds.length >= 3) {
+        alert('En fazla 3 fonu aynı anda karşılaştırabilirsiniz.');
         return;
       }
       setSelectedFunds([...selectedFunds, fund]);
@@ -291,7 +293,6 @@ const RiskMetrics = () => {
         <div className="tefas-title-bar">
           <div className="title-left">
             <h1 className="tefas-section-title">Fon Risk Metrikleri Hesaplama</h1>
-
           </div>
         </div>
 
@@ -482,6 +483,15 @@ const RiskMetrics = () => {
               <option value={100}>100 Öğe Göster</option>
             </select>
 
+            <button 
+              className="tefas-list-settings-btn"
+              onClick={() => setIsInfoModalOpen(true)}
+              style={{ marginRight: '8px' }}
+            >
+              <Info size={14} />
+              <span>Risk Metrikleri Rehberi</span>
+            </button>
+
             <button className="tefas-list-settings-btn">
               <span>Listeleme Ayarları</span>
               <SlidersHorizontal size={14} />
@@ -514,28 +524,28 @@ const RiskMetrics = () => {
                     <th onClick={() => handleHeaderSort('VOLATILITE')} className="sortable text-center th-risk">
                       Risk Skoru <Info size={12} className="info-icon" /> <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('YILLIK_GETIRI')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('YILLIK_GETIRI')} className="sortable text-right th-num" title="Son bir yıldaki brüt getiri oranı">
                       Yıllık Getiri <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('VOLATILITE')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('VOLATILITE')} className="sortable text-right th-num" title="Getirilerdeki dalgalanma (standart sapma). Yüksek volatilite, yüksek risk demektir.">
                       Volatilite <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('DOWNSIDE_RISK')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('DOWNSIDE_RISK')} className="sortable text-right th-num" title="Sadece negatif getirilerin yarattığı risk. Düşüş senaryolarındaki kayıp potansiyeli.">
                       Downside Risk <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('BETA')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('BETA')} className="sortable text-right th-num" title="Fonun piyasaya duyarlılığı. Beta > 1 ise piyasadan daha riskli ve hareketlidir.">
                       Beta <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('SHARPE')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('SHARPE')} className="sortable text-right th-num" title="Birim risk başına elde edilen ekstra getiri. Yüksek olması tercih edilir.">
                       Sharpe <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('SORTINO')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('SORTINO')} className="sortable text-right th-num" title="Negatif riske karşılık elde edilen ekstra getiri. Sadece kayıp riskini dikkate alır.">
                       Sortino <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('TREYNOR')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('TREYNOR')} className="sortable text-right th-num" title="Piyasa riskine (Beta) karşılık elde edilen getiri oranı.">
                       Treynor <ArrowUpDown size={11} />
                     </th>
-                    <th onClick={() => handleHeaderSort('ALPHA')} className="sortable text-right th-num">
+                    <th onClick={() => handleHeaderSort('ALPHA')} className="sortable text-right th-num" title="Fon yöneticisinin piyasadan bağımsız yarattığı ilave getiri.">
                       Alpha <ArrowUpDown size={11} />
                     </th>
                     <th onClick={() => handleHeaderSort('VAR_RMD')} className="sortable text-right th-num th-var" title="1 haftada %99 ihtimalle maruz kalınabilecek maksimum kayıp oranı">
@@ -707,7 +717,7 @@ const RiskMetrics = () => {
             })}
           </div>
 
-          <span className="compare-bar-count">({selectedFunds.length} / 5 Seçildi)</span>
+          <span className="compare-bar-count">({selectedFunds.length} / 3 Seçildi)</span>
 
           <button
             className="compare-launch-btn"
@@ -732,6 +742,12 @@ const RiskMetrics = () => {
         onClose={() => setIsCompareModalOpen(false)}
         selectedFunds={selectedFunds}
         allData={data}
+      />
+
+      {/* Risk Information Modal */}
+      <RiskInfoModal 
+        isOpen={isInfoModalOpen} 
+        onClose={() => setIsInfoModalOpen(false)} 
       />
 
     </div>

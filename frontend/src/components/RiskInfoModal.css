@@ -1,0 +1,112 @@
+.risk-info-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.risk-info-modal-content {
+  background-color: var(--bg-darker);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--panel-border);
+  overflow: hidden;
+}
+
+.risk-info-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  background-color: var(--header-bg);
+  color: var(--text-white);
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.risk-info-modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-family: 'TefasFont', sans-serif;
+  color: var(--accent-yellow);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.help-page-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--accent-blue);
+  color: var(--text-white);
+  border: 1px solid var(--control-border);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.help-page-btn:hover {
+  background-color: var(--accent-blue-hover);
+  border-color: var(--accent-blue);
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  transition: all var(--transition-fast);
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent-yellow);
+}
+
+.risk-info-modal-body {
+  padding: 25px;
+  overflow-y: auto;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-gray);
+}
+
+.risk-info-modal-body p {
+  margin-bottom: 18px;
+  text-align: justify;
+}
+
+.risk-info-modal-body p:last-child {
+  margin-bottom: 0;
+}
+
+.risk-info-modal-body strong {
+  color: var(--text-light);
+  font-weight: 600;
+}
