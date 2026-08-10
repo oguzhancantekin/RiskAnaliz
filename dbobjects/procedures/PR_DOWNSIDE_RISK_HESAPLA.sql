@@ -15,7 +15,7 @@ BEGIN
     -- Böylece sadece kaybettiren (zarar) günlerin kareleri (POWER(..., 2)) toplanır (SUM).
     -- Tıpkı Volatilitede (STDDEV_SAMP) olduğu gibi, burada da popülasyon (N) yerine örneklem (N-1) varyansını baz alıyoruz: COUNT(*) - 1
     -- Bulunan sonucun karekökü (SQRT) alınıp yıllıklandırmak için SQRT(252) ile çarpılır.
-    SELECT NVL(SQRT(SUM(POWER(LEAST(0, F_GETIRI), 2)) / (COUNT(*) - 1)) * SQRT(252), 0)
+    SELECT NVL(SQRT(SUM(POWER(LEAST(0, F_GETIRI), 2)) / NULLIF(COUNT(*) - 1, 0)) * SQRT(252), 0)
     INTO v_downside_risk
     FROM (
         SELECT 

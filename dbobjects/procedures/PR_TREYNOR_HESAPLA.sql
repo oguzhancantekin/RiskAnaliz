@@ -29,10 +29,6 @@ BEGIN
         UPDATE TB_RISK_SONUC
         SET TREYNOR = v_treynor
         WHERE FON_KODU = p_fonkodu AND HESAPLAMA_TARIHI = p_tarih;
-    ELSE
-        UPDATE TB_RISK_SONUC
-        SET TREYNOR = NULL
-        WHERE FON_KODU = p_fonkodu AND HESAPLAMA_TARIHI = p_tarih;
     END IF;
 EXCEPTION
     WHEN OTHERS THEN
