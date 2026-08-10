@@ -26,4 +26,4 @@ BEGIN
           AND (v_fonkodu IS NULL OR r.FON_KODU = v_fonkodu) -- Arayüzden belirli bir fon seçildiyse (filtre) sadece o fonu, seçilmediyse hepsini getirir.
         ORDER BY r.FON_KODU ASC; -- Listeyi fon koduna göre A'dan Z'ye sıralıyoruz.
 END;
-/
+

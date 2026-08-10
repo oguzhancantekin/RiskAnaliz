@@ -29,4 +29,4 @@ EXCEPTION
     WHEN OTHERS THEN
         RAISE_APPLICATION_ERROR(-20001, 'CV Hesaplarken Hata: ' || SQLERRM);
 END;
-/
+

@@ -51,4 +51,4 @@ EXCEPTION
     WHEN OTHERS THEN
         RAISE_APPLICATION_ERROR(-20001, 'Beta Hesaplarken Hata: ' || SQLERRM);
 END;
-/
+

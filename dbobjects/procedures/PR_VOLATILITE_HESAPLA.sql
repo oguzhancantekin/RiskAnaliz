@@ -44,4 +44,4 @@ EXCEPTION
     WHEN OTHERS THEN
         RAISE_APPLICATION_ERROR(-20001, 'Volatilite Hesaplarken Hata: ' || SQLERRM);
 END;
-/
+

@@ -13,4 +13,4 @@ BEGIN
         INSERT (ENDEKS_KODU, TARIH, FIYAT)
         VALUES (src.ENDEKS_KODU, src.TARIH, src.FIYAT);
 END;
-/
+

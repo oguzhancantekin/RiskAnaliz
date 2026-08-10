@@ -35,4 +35,4 @@ EXCEPTION
     WHEN OTHERS THEN
         RAISE_APPLICATION_ERROR(-20001, 'Downside Risk Hesaplarken Hata: ' || SQLERRM);
 END;
-/
+

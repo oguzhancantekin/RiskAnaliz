@@ -22,4 +22,4 @@ BEGIN
         INSERT (FON_KODU, TARIH, BIRIM_FIYAT)
         VALUES (src.FON_KODU, src.TARIH, src.BIRIM_FIYAT);
 END;
-/
+

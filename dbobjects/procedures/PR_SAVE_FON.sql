@@ -14,4 +14,4 @@ BEGIN
         INSERT (FON_KODU, FON_ADI, FON_TURU)
         VALUES (src.FON_KODU, src.FON_ADI, src.FON_TURU);
 END;
-/
+
