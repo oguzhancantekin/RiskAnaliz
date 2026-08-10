@@ -11,17 +11,20 @@ BEGIN
 
     -- 1. ADIM: Matematiksel Beta Formülü
     -- BETA = Kovaryans(Fon Getirisi, Endeks Getirisi) / Varyans(Endeks Getirisi)
-    -- İki ayrı "WITH" bloğu ile hem Fonun hem de Endeksin günlük getirilerini anlık olarak (RAM'de) hesaplıyoruz.
-    
-    WITH FonGetiri AS (
+    -- Alt sorgular (derived table) ile hem Fonun hem de Endeksin günlük getirilerini anlık olarak (RAM'de) hesaplıyoruz.
+    -- Tarihler üzerinden iki tabloyu birleştirip (JOIN), COVAR_SAMP ve VAR_SAMP fonksiyonlarını uyguluyoruz
+    SELECT 
+        COVAR_SAMP(f.F_GETIRI, e.E_GETIRI) / NULLIF(VAR_SAMP(e.E_GETIRI), 0)
+    INTO v_beta
+    FROM (
         SELECT 
             TARIH,
             (BIRIM_FIYAT - LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH)) / NULLIF(LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH), 0) AS F_GETIRI
         FROM TB_FON_FIYAT
         WHERE FON_KODU = p_fonkodu
           AND TARIH BETWEEN v_baslangic_12 AND p_tarih
-    ),
-    EndeksGetiri AS (
+    ) f
+    JOIN (
         SELECT 
             -- BIST100 getirisini, fonun yayımlandığı bir sonraki iş günü (T+1) ile eşleştirmek için LEAD kullanıyoruz.
             LEAD(TARIH) OVER (ORDER BY TARIH) AS TARIH,
@@ -29,13 +32,7 @@ BEGIN
         FROM TB_ENDEKS_FIYAT
         WHERE ENDEKS_KODU = 'BIST100'
           AND TARIH BETWEEN v_baslangic_13 AND p_tarih -- Kaydırma yapacağımız için fazladan 1 ay geriden alıyoruz
-    )
-    -- Tarihler üzerinden iki tabloyu birleştirip (JOIN), COVAR_SAMP ve VAR_SAMP fonksiyonlarını uyguluyoruz
-    SELECT 
-        COVAR_SAMP(f.F_GETIRI, e.E_GETIRI) / NULLIF(VAR_SAMP(e.E_GETIRI), 0)
-    INTO v_beta
-    FROM FonGetiri f
-    JOIN EndeksGetiri e ON f.TARIH = e.TARIH
+    ) e ON f.TARIH = e.TARIH
     WHERE f.F_GETIRI IS NOT NULL AND e.E_GETIRI IS NOT NULL;
 
     -- 2. ADIM: Sonucu Veritabanına Yazma (Idempotent MERGE)

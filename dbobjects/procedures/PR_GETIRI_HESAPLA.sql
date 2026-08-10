@@ -21,17 +21,17 @@ BEGIN
 V_BASLANGIC_TARIHI := ADD_MONTHS(p_tarih, -12);
 
 -- bugunden kucuk en yakin is gunu (Bir önceki iş gününü buluyoruz ki günlük getiriyi hesaplayabilelim)
-SELECT MAX(tarih) INTO V_DUN_TARIH 
-FROM TB_IS_GUNU
-WHERE TARIH < p_tarih
-AND IS_GUNU_MU = 1;
+SELECT MAX(TARIH) INTO V_DUN_TARIH 
+FROM TB_FON_FIYAT
+WHERE FON_KODU = p_fonkodu
+AND TARIH < p_tarih;
 
 -- Yıllık getiri hesaplamak için 1 yıl (12 ay) önceki güne veya ona en yakın ileri tarihteki ilk iş gününe gidiyoruz.
-SELECT MIN(tarih)
+SELECT MIN(TARIH)
 INTO V_GECEN_YIL_TARIH
-FROM TB_IS_GUNU
-WHERE TARIH >= V_BASLANGIC_TARIHI
-AND IS_GUNU_MU = 1;
+FROM TB_FON_FIYAT
+WHERE FON_KODU = p_fonkodu
+AND TARIH >= V_BASLANGIC_TARIHI;
 
 -- İlgili fonun parametre olarak gönderilen bugünkü kapanış fiyatını (birim fiyat) çekiyoruz.
 SELECT birim_fiyat INTO V_BUGUN_FIYAT FROM TB_FON_FIYAT

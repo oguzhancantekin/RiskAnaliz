@@ -8,6 +8,9 @@ CREATE OR REPLACE PROCEDURE PR_ALPHA_HESAPLA(
     v_endeks_getiri NUMBER;
     v_alpha NUMBER;
     v_baslangic_tarihi DATE;
+    v_gecen_yil_tarih DATE;
+    v_endeks_ilk_fiyat NUMBER;
+    v_endeks_son_fiyat NUMBER;
 BEGIN
     v_baslangic_tarihi := ADD_MONTHS(p_tarih, -12);
 
@@ -23,20 +26,27 @@ BEGIN
     WHERE FON_KODU = p_fonkodu AND HESAPLAMA_TARIHI = p_tarih;
 
     -- 3. BIST100 endeksinin son 1 yıllık getirisini hesaplıyoruz.
-    -- WITH bloğu kullanarak endeksin 1 yıl önceki ve bugünkü fiyatlarını sıraya diziyoruz (rn_asc ve rn_desc ile ilk ve son kayıtları buluyoruz)
-    WITH EndeksFiyatlar AS (
-        SELECT FIYAT,
-               ROW_NUMBER() OVER (ORDER BY TARIH ASC) as rn_asc,   -- İlk fiyatı (1 yıl önceki) bulmak için
-               ROW_NUMBER() OVER (ORDER BY TARIH DESC) as rn_desc  -- Son fiyatı (bugünkü) bulmak için
-        FROM TB_ENDEKS_FIYAT
-        WHERE ENDEKS_KODU = 'BIST100'
-          AND TARIH BETWEEN v_baslangic_tarihi AND p_tarih
-    )
+    -- Yıllık getiri hesaplamak için 1 yıl (12 ay) önceki güne veya ona en yakın ileri tarihteki ilk işlem gününe (fiyatın olduğu ilk güne) gidiyoruz.
+    SELECT MIN(TARIH)
+    INTO v_gecen_yil_tarih
+    FROM TB_ENDEKS_FIYAT
+    WHERE ENDEKS_KODU = 'BIST100'
+    AND TARIH >= v_baslangic_tarihi;
+
+    -- Endeksin parametre olarak gönderilen bugünkü kapanış fiyatını çekiyoruz.
+    SELECT FIYAT INTO v_endeks_son_fiyat 
+    FROM TB_ENDEKS_FIYAT
+    WHERE ENDEKS_KODU = 'BIST100'
+    AND TARIH = p_tarih;
+
+    -- Endeksin bulduğumuz '1 yıl önceki' fiyatını çekiyoruz.
+    SELECT FIYAT INTO v_endeks_ilk_fiyat 
+    FROM TB_ENDEKS_FIYAT
+    WHERE ENDEKS_KODU = 'BIST100'
+    AND TARIH = v_gecen_yil_tarih;
+
     -- Endeks getirisi formülü: (Son Fiyat - İlk Fiyat) / İlk Fiyat
-    SELECT ( (SELECT FIYAT FROM EndeksFiyatlar WHERE rn_desc = 1) - (SELECT FIYAT FROM EndeksFiyatlar WHERE rn_asc = 1) ) 
-           / NULLIF((SELECT FIYAT FROM EndeksFiyatlar WHERE rn_asc = 1), 0)
-    INTO v_endeks_getiri
-    FROM DUAL;
+    v_endeks_getiri := (v_endeks_son_fiyat - v_endeks_ilk_fiyat) / NULLIF(v_endeks_ilk_fiyat, 0);
 
     -- 4. Alpha Hesaplanması ve Kaydedilmesi
     -- Eğer Beta değeri null değilse (hesaplanabilmişse) işlem yapılır

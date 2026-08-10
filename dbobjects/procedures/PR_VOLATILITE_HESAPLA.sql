@@ -10,10 +10,14 @@ BEGIN
     -- 1. ADIM: Matematiksel Volatilite Formülü
     -- Elimizde her günün getirisi bir tabloda kayıtlı değil. 
     -- Sadece günlük FİYATLAR var.
-    -- WITH bloğu ile RAM'de sanal bir tablo oluşturuyoruz.
     -- LAG(BIRIM_FIYAT) fonksiyonu, her fiyatın yanına "Dünkü Fiyatı" yazdırır.
     
-    WITH GunlukGetiriler AS (
+    -- RAM'de oluşan bu tablodan (Bugün - Dün)/Dün formülüyle getiriyi anlık hesaplayıp,
+    -- Doğrudan STDDEV_SAMP (Standart Sapma) değerini alıyor ve SQRT(252) ile çarpıyoruz.
+    -- ORA-01476 (Sıfıra bölme) hatasını engellemek için NULLIF(DUNKU_FIYAT, 0) kullanıyoruz.
+    SELECT STDDEV_SAMP((BIRIM_FIYAT - DUNKU_FIYAT) / NULLIF(DUNKU_FIYAT, 0)) * SQRT(252)
+    INTO v_volatilite
+    FROM (
         SELECT 
             TARIH,
             BIRIM_FIYAT,
@@ -22,12 +26,6 @@ BEGIN
         WHERE FON_KODU = p_fonkodu
           AND TARIH BETWEEN v_baslangic_tarihi AND p_tarih
     )
-    -- RAM'de oluşan bu tablodan (Bugün - Dün)/Dün formülüyle getiriyi anlık hesaplayıp,
-    -- Doğrudan STDDEV_SAMP (Standart Sapma) değerini alıyor ve SQRT(252) ile çarpıyoruz.
-    -- ORA-01476 (Sıfıra bölme) hatasını engellemek için NULLIF(DUNKU_FIYAT, 0) kullanıyoruz.
-    SELECT STDDEV_SAMP((BIRIM_FIYAT - DUNKU_FIYAT) / NULLIF(DUNKU_FIYAT, 0)) * SQRT(252)
-    INTO v_volatilite
-    FROM GunlukGetiriler
     WHERE DUNKU_FIYAT > 0; -- Hem dünkü fiyatı NULL olan ilk günü, hem de fiyatı 0 veya eksi olan hatalı verileri dışlıyoruz.
 
     -- 2. ADIM: Sonucu Veritabanına Yazma (Idempotent MERGE)

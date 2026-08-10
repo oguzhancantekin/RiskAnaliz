@@ -9,15 +9,7 @@ BEGIN
 
     -- 1. ADIM: Matematiksel Downside Risk Formülü
     -- Volatiliteye (Standart Sapma) çok benzer, ancak sadece zararla (negatif) kapanan günlerin sapmasını alır.
-    -- WITH bloğu ile RAM'de günlük getirileri hesaplayan sanal bir tablo oluşturuyoruz.
-    WITH FonGetiri AS (
-        SELECT 
-            -- (Bugün - Dün) / Dün formülü ile günlük getiriyi hesaplar (Dünkü fiyatı LAG fonksiyonuyla bulur)
-            (BIRIM_FIYAT - LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH)) / NULLIF(LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH), 0) AS F_GETIRI
-        FROM TB_FON_FIYAT
-        WHERE FON_KODU = p_fonkodu
-          AND TARIH BETWEEN v_baslangic_tarihi AND p_tarih
-    )
+    -- Alt sorgu (derived table) ile RAM'de günlük getirileri hesaplayan bir yapı oluşturuyoruz.
     -- 2. ADIM: Hesaplama
     -- LEAST(0, F_GETIRI): Getiri pozitifse (0'dan büyükse) onu 0 sayar. Getiri negatifse kendisini alır.
     -- Böylece sadece kaybettiren (zarar) günlerin kareleri (POWER(..., 2)) toplanır (SUM).
@@ -25,7 +17,14 @@ BEGIN
     -- Bulunan sonucun karekökü (SQRT) alınıp yıllıklandırmak için SQRT(252) ile çarpılır.
     SELECT NVL(SQRT(SUM(POWER(LEAST(0, F_GETIRI), 2)) / (COUNT(*) - 1)) * SQRT(252), 0)
     INTO v_downside_risk
-    FROM FonGetiri
+    FROM (
+        SELECT 
+            -- (Bugün - Dün) / Dün formülü ile günlük getiriyi hesaplar (Dünkü fiyatı LAG fonksiyonuyla bulur)
+            (BIRIM_FIYAT - LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH)) / NULLIF(LAG(BIRIM_FIYAT) OVER (ORDER BY TARIH), 0) AS F_GETIRI
+        FROM TB_FON_FIYAT
+        WHERE FON_KODU = p_fonkodu
+          AND TARIH BETWEEN v_baslangic_tarihi AND p_tarih
+    )
     WHERE F_GETIRI IS NOT NULL;
 
     -- 3. ADIM: Sonucu Veritabanına Yazma
