@@ -10,7 +10,7 @@ BEGIN
     USING (SELECT p_fonkodu AS FON_KODU FROM DUAL) src
     ON (f.FON_KODU = src.FON_KODU)
     WHEN NOT MATCHED THEN
-        INSERT (FON_KODU) VALUES (src.FON_KODU);
+        INSERT (FON_KODU, FON_ADI) VALUES (src.FON_KODU, 'TANIMSIZ - ' || src.FON_KODU);
 
     -- Günlük birim fiyatı kaydet veya güncelle
     MERGE INTO TB_FON_FIYAT f

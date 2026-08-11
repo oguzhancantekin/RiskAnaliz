@@ -1,8 +1,18 @@
 CREATE OR REPLACE PROCEDURE PR_TUM_RISKLERI_HESAPLA(
     p_tarih IN DATE
 ) AS
+    v_fiyat_sayisi NUMBER;
 BEGIN
-    -- 0. Önce Akıllı Veri Sağlığı ve Anomali Tespit motorunu çalıştır
+    -- 0. Tatil ve Hafta Sonu Kontrolü (Erken Çıkış)
+    -- İlgili tarihte sistemde hiç fiyat verisi var mı bakıyoruz.
+    -- Eğer o gün için fiyat girilmemişse, işlem günü değildir, bu yüzden doğrudan hata fırlatıyoruz.
+    SELECT COUNT(*) INTO v_fiyat_sayisi FROM TB_FON_FIYAT WHERE TARIH = p_tarih;
+    
+    IF v_fiyat_sayisi = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'HATA: Belirtilen tarih (' || TO_CHAR(p_tarih, 'DD.MM.YYYY') || ') için fiyat verisi bulunamadı. Gün hafta sonuna veya tatile denk gelmiş olabilir.');
+    END IF;
+
+    -- 1. Önce Akıllı Veri Sağlığı ve Anomali Tespit motorunu çalıştır
     -- (NMG gibi %100 üstü günlük sıçrama yapan veya ölü fonları PASIF konuma al)
     PR_FON_DURUM_GUNCELLE;
 
