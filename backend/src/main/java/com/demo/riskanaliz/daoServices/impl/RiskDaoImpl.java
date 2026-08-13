@@ -27,12 +27,10 @@ public class RiskDaoImpl implements RiskDao {
     }
 
     @Override
-    public void tumRiskleriHesapla(Date tarih) {
-        // '?' işareti, dışarıdan (parametre olarak) değer geleceğini belirtir.
-        String sql = "CALL PR_TUM_RISKLERI_HESAPLA(?)";
-        // jdbcTemplate objesi ile hazırlanan SQL komutu çalıştırılır (execute edilir) 
-        // ve methoda gelen 'tarih' argümanı '?' yerine parametre olarak verilir.
-        jdbcTemplate.update(sql, tarih);
+    public void tumRiskleriHesapla(Date tarih, String fonKodu) {
+        // İkinci parametre (fonKodu) null gelse bile JDBC bunu veritabanına NULL olarak geçirir.
+        String sql = "CALL PR_TUM_RISKLERI_HESAPLA(?, ?)";
+        jdbcTemplate.update(sql, tarih, fonKodu);
     }
 
     @Override

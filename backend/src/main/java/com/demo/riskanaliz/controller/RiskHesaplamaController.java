@@ -28,15 +28,16 @@ private final RiskService riskService;
     // Risk hesaplama işlemini başlatan REST endpoint'i
     @PostMapping("/hesapla")
     public ResponseEntity<Map<String, String>> hesaplamayiBaslat(
-            // 'tarih' parametresini URL'den alır ve "yyyy-MM-dd" formatında Date nesnesine dönüştürür.
-            @RequestParam("tarih") @DateTimeFormat(pattern = "yyyy-MM-dd") Date tarih) {
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date tarih,
+            @RequestParam(required = false) String fonKodu
+    ) {
         
         // İşlem sonucunu (başarılı/hatalı durumu ve mesajı) frontend'e JSON olarak dönmek için bir Map oluşturulur.
         Map<String, String> response = new HashMap<>();
         
         try {
             // Servis katmanındaki hesaplamayı başlatan metodu çağırır.
-            riskService.hesaplamayiBaslat(tarih);
+            riskService.hesaplamayiBaslat(tarih, fonKodu);
             // Eğer işlem başarılıysa, başarı mesajı ve durum kodunu response'a ekler.
             response.put("mesaj", "Seçilen tarih için risk hesaplamaları başarıyla tamamlandı!");
             response.put("durum", "BASARILI");
