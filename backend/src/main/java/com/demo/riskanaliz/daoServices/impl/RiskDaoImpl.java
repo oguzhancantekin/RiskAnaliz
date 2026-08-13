@@ -21,16 +21,33 @@ public class RiskDaoImpl implements RiskDao {
     @Autowired
     private final JdbcTemplate jdbcTemplate;
 
-    public RiskDaoImpl(JdbcTemplate jdbcTemplate){
+    public RiskDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         System.out.println(">>> 🚀 RISK dao NESNESİ SPRING TARAFINDAN OLUŞTURULDU! <<<");
     }
 
     @Override
-    public void tumRiskleriHesapla(Date tarih, String fonKodu) {
+    public int tumRiskleriHesapla(Date tarih, String fonKodu) {
+        // Süslü parantez olmadan Oracle driver "bad SQL grammar" hatası fırlatır.
         // İkinci parametre (fonKodu) null gelse bile JDBC bunu veritabanına NULL olarak geçirir.
         String sql = "CALL PR_TUM_RISKLERI_HESAPLA(?, ?)";
         jdbcTemplate.update(sql, tarih, fonKodu);
+
+        // Prosedür tamamlandıktan sonra o tarih için kaç fon sonucu üretildiğini
+        // sayıyoruz.
+        // NOT: SQL'de "FON_KODU = NULL" hiçbir zaman true dönmez; fonKodu null ise
+        // filtreyi tamamen çıkarmak gerekir.
+        Integer count;
+        if (fonKodu != null && !fonKodu.isBlank()) {
+            count = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM TB_RISK_SONUC WHERE HESAPLAMA_TARIHI = ? AND FON_KODU = ?",
+                    Integer.class, tarih, fonKodu);
+        } else {
+            count = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM TB_RISK_SONUC WHERE HESAPLAMA_TARIHI = ?",
+                    Integer.class, tarih);
+        }
+        return count != null ? count : 0;
     }
 
     @Override
@@ -39,13 +56,14 @@ public class RiskDaoImpl implements RiskDao {
         // Spring JDBC'nin SimpleJdbcCall sınıfını kullanıyoruz.
         SimpleJdbcCall jdbcCall = new SimpleJdbcCall(jdbcTemplate)
                 .withProcedureName("PR_GET_RISK_SONUCLARI")
-// Prosedürün döndüreceği 'p_cursor' adlı OUT parametresini yakalıyoruz.
-// BeanPropertyRowMapper ile veritabanından dönen sütun isimlerini RiskSonucDTO sınıfındaki alan isimleriyle otomatik eşleştiriyoruz.
+                // Prosedürün döndüreceği 'p_cursor' adlı OUT parametresini yakalıyoruz.
+                // BeanPropertyRowMapper ile veritabanından dönen sütun isimlerini RiskSonucDTO
+                // sınıfındaki alan isimleriyle otomatik eşleştiriyoruz.
                 .returningResultSet("p_cursor", BeanPropertyRowMapper.newInstance(RiskSonucDTO.class));
 
         // Prosedüre varsa 'fonKodu' parametresini göndererek komutu çalıştırıyoruz.
         Map<String, Object> out = jdbcCall.execute(new MapSqlParameterSource("p_fonkodu", fonKodu));
-        
+
         // Dönen Map içerisinden eşleştirilmiş DTO listesini çıkarıyoruz.
         @SuppressWarnings("unchecked")
         List<RiskSonucDTO> list = (List<RiskSonucDTO>) out.get("p_cursor");

@@ -8,8 +8,9 @@ public interface RiskService {
     /**
      * Kullanıcının girdiği tarih için tüm risk hesaplamalarını başlatır.
      * @param tarih Seçilen tarih
+     * @return Hesaplanan fon sayısı
      */
-    void hesaplamayiBaslat(Date tarih, String fonKodu);
+    int hesaplamayiBaslat(Date tarih, String fonKodu);
 
     /**
      * Veritabanından risk sonuçlarını çeker.

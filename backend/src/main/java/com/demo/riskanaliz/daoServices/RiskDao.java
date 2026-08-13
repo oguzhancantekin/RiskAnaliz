@@ -8,8 +8,10 @@ public interface RiskDao {
     /**
      * Veritabanındaki PR_TUM_RISKLERI_HESAPLA prosedürünü tetikler.
      * @param tarih Hesaplamanın yapılacağı tarih
+     * @param fonKodu Opsiyonel fon kodu filtresi (boş ise tüm aktif fonlar)
+     * @return Hesaplanan fon sayısı
      */
-    void tumRiskleriHesapla(Date tarih, String fonKodu);
+    int tumRiskleriHesapla(Date tarih, String fonKodu);
 
     /**
      * Veritabanından hesaplanmış risk sonuçlarını getirir.

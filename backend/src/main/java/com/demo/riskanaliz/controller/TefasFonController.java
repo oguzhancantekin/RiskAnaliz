@@ -55,7 +55,7 @@ public class TefasFonController {
             tefasFonService.updateFonTuruCsv(file);
             System.out.println(">>> 📊 TEFAS FON bilgileri başarıyla güncellendi! <<<");
             return ResponseEntity
-                    .ok(Map.of("message", "Tüm fonların Şemsiye Fon Türü veritabanında başarıyla güncellendi!"));
+                    .ok(Map.of("message", "Tüm fonların bilgileri veritabanında başarıyla güncellendi!"));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
