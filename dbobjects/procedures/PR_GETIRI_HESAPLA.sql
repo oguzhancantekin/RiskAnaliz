@@ -50,11 +50,10 @@ and tarih=V_GECEN_YIL_TARIH;
 
 -- Temel Getiri Formülleri: (Bugünkü Fiyat - Eski Fiyat) / Eski Fiyat * 100
 -- 1. Günlük Getiri (Yüzde cinsinden)
-V_GUNLUK_GETIRI := (V_BUGUN_FIYAT-V_DUN_FIYAT)*100/(V_DUN_FIYAT);
+V_GUNLUK_GETIRI := (V_BUGUN_FIYAT-V_DUN_FIYAT)*100/NULLIF(V_DUN_FIYAT,0);
 
 -- 2. Yıllık Getiri (Yüzde cinsinden)
-V_YILLIK_GETIRI := (V_BUGUN_FIYAT-V_GECEN_YIL_FIYAT)*100/(V_GECEN_YIL_FIYAT);
-
+V_YILLIK_GETIRI := (V_BUGUN_FIYAT-V_GECEN_YIL_FIYAT)*100/NULLIF(V_GECEN_YIL_FIYAT,0);
 -- Hesaplanan sonuçları veritabanına kaydetme (Insert/Update)
 -- MERGE komutu (Upsert) "Eğer veri varsa GÜNCELLE, yoksa YENİ EKLE" mantığıyla çalışır. ("Idempotency")
 -- Bu sayede aynı tarih için prosedür 2 kere çalıştırılırsa hata vermez veya veriyi çiftlemez, sadece eski veriyi ezer.
@@ -67,4 +66,7 @@ WHEN NOT MATCHED THEN
     INSERT (FON_KODU, HESAPLAMA_TARIHI, GUNLUK_GETIRI, YILLIK_GETIRI)
     VALUES (src.FON, src.TAR, src.GG, src.YG);
 
-END;
+EXCEPTION
+    WHEN OTHERS THEN
+        PR_LOG_HATA(p_fonkodu, 'PR_GETIRI_HESAPLA', SQLERRM);
+END;

@@ -33,6 +33,6 @@ BEGIN
     WHERE FON_KODU = p_fonkodu AND HESAPLAMA_TARIHI = p_tarih;
 EXCEPTION
     WHEN OTHERS THEN
-        RAISE_APPLICATION_ERROR(-20001, 'Downside Risk Hesaplarken Hata: ' || SQLERRM);
+        PR_LOG_HATA(p_fonkodu, 'PR_DOWNSIDE_RISK_HESAPLA', SQLERRM);
 END;
 

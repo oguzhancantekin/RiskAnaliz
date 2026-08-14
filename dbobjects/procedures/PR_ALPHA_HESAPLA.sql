@@ -63,6 +63,6 @@ BEGIN
     END IF;
 EXCEPTION
     WHEN OTHERS THEN
-        RAISE_APPLICATION_ERROR(-20001, 'Alpha Hesaplarken Hata: ' || SQLERRM);
+        PR_LOG_HATA(p_fonkodu, 'PR_ALPHA_HESAPLA', SQLERRM);
 END;
 

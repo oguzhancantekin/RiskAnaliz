@@ -1,23 +1,29 @@
-CREATE OR REPLACE PROCEDURE PR_TUM_RISKLERI_HESAPLA(
-    p_tarih IN DATE
+CREATE OR REPLACE PROCEDURE PR_TUM_RISKLERI_HESAPLA( 
+    p_tarih IN DATE,
+    p_fonkodu IN VARCHAR2 DEFAULT NULL
 ) AS
     v_fiyat_sayisi NUMBER;
 BEGIN
     -- 0. Tatil ve Hafta Sonu Kontrolü (Erken Çıkış)
     -- İlgili tarihte sistemde hiç fiyat verisi var mı bakıyoruz.
-    -- Eğer o gün için fiyat girilmemişse, işlem günü değildir, bu yüzden doğrudan hata fırlatıyoruz.
-    SELECT COUNT(*) INTO v_fiyat_sayisi FROM TB_FON_FIYAT WHERE TARIH = p_tarih;
-    
-    IF v_fiyat_sayisi = 0 THEN
-        RAISE_APPLICATION_ERROR(-20001, 'HATA: Belirtilen tarih (' || TO_CHAR(p_tarih, 'DD.MM.YYYY') || ') için fiyat verisi bulunamadı. Gün hafta sonuna veya tatile denk gelmiş olabilir.');
-    END IF;
+    BEGIN
+        SELECT 1 INTO v_fiyat_sayisi 
+        FROM TB_FON_FIYAT 
+        WHERE TARIH = p_tarih AND ROWNUM = 1; 
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20001, 'HATA: Belirtilen tarih için fiyat verisi bulunamadı. Gün hafta sonuna veya tatile denk gelmiş olabilir.');
+    END;
 
-    -- 1. Önce Akıllı Veri Sağlığı ve Anomali Tespit motorunu çalıştır
-    -- (NMG gibi %100 üstü günlük sıçrama yapan veya ölü fonları PASIF konuma al)
-    PR_FON_DURUM_GUNCELLE;
-
-    -- 1. Sadece veri sağlığı temiz olan AKTIF fonlar için risk oranlarını hesapla
-    FOR r_fon IN (SELECT FON_KODU FROM TB_FONLAR WHERE NVL(DURUM, 'AKTIF') = 'AKTIF') LOOP
+    -- 1. Hedef Fonları Belirle ve Hesapla
+    -- Eğer p_fonkodu boşsa (NULL), sadece DURUM = 'AKTIF' olan tüm fonlar için çalışır.
+    -- Eğer özel bir fon kodu verilmişse, DURUM'una bakmaksızın (zorunlu olarak) sadece o fon için çalışır.
+    FOR r_fon IN (
+        SELECT FON_KODU 
+        FROM TB_FONLAR 
+        WHERE (p_fonkodu IS NULL AND DURUM = 'AKTIF')
+           OR (FON_KODU = p_fonkodu)
+    ) LOOP
         BEGIN
             -- 1. Temel Getiriler
             PR_GETIRI_HESAPLA(r_fon.FON_KODU, p_tarih);
@@ -37,7 +43,7 @@ BEGIN
             
         EXCEPTION
             WHEN OTHERS THEN
-                NULL;
+                PR_LOG_HATA(r_fon.FON_KODU, 'PR_TUM_RISKLERI_HESAPLA', SQLERRM);
         END;
     END LOOP;
 END;

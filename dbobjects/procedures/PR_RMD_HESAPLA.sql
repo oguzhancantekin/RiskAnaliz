@@ -24,6 +24,6 @@ BEGIN
     WHERE FON_KODU = p_fonkodu AND HESAPLAMA_TARIHI = p_tarih;
 EXCEPTION
     WHEN OTHERS THEN
-        RAISE_APPLICATION_ERROR(-20001, 'RMD Hesaplarken Hata: ' || SQLERRM);
+        PR_LOG_HATA(p_fonkodu, 'PR_RMD_HESAPLA', SQLERRM);
 END;
 

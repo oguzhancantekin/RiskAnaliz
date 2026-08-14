@@ -32,6 +32,6 @@ BEGIN
     END IF;
 EXCEPTION
     WHEN OTHERS THEN
-        RAISE_APPLICATION_ERROR(-20001, 'Sortino Hesaplarken Hata: ' || SQLERRM);
+        PR_LOG_HATA(p_fonkodu, 'PR_SORTINO_HESAPLA', SQLERRM);
 END;
 

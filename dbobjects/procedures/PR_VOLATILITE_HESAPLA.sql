@@ -42,6 +42,6 @@ BEGIN
 
 EXCEPTION
     WHEN OTHERS THEN
-        RAISE_APPLICATION_ERROR(-20001, 'Volatilite Hesaplarken Hata: ' || SQLERRM);
+        PR_LOG_HATA(p_fonkodu, 'PR_VOLATILITE_HESAPLA', SQLERRM);
 END;
 
